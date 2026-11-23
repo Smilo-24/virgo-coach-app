@@ -295,43 +295,9 @@ const GROCERY_IDS = [
 ];
 
 // =============================================================================
-// SCUDO PRIVACY (Auto-Unlock per Simone ID 262089602 su Telegram, PIN fuori)
-// =============================================================================
-const AUTHORIZED_TG_ID = 262089602;
-const FALLBACK_PIN = "2407";
-
-function checkPrivacyAccess() {
-  const tgUserId = tg?.initDataUnsafe?.user?.id;
-  const savedUnlock = localStorage.getItem("virgo_privacy_unlocked") === "1";
-
-  if (tgUserId === AUTHORIZED_TG_ID || savedUnlock) {
-    unlockAppUI();
-  }
-}
-
-function unlockWithPin() {
-  const val = document.getElementById("pin-input")?.value.trim();
-  if (val === FALLBACK_PIN) {
-    localStorage.setItem("virgo_privacy_unlocked", "1");
-    unlockAppUI();
-  } else {
-    const err = document.getElementById("pin-error");
-    if (err) err.style.display = "block";
-  }
-}
-
-function unlockAppUI() {
-  const lock = document.getElementById("privacy-lock-screen");
-  const app = document.getElementById("app");
-  if (lock) lock.style.display = "none";
-  if (app) app.style.display = "flex";
-}
-
-// =============================================================================
-// INIZIALIZZAZIONE UI
+// INIZIALIZZAZIONE UI (Zero Attrito)
 // =============================================================================
 document.addEventListener("DOMContentLoaded", () => {
-  checkPrivacyAccess();
   checkDailyAutoReset();
   renderSmartPhase();
   renderToday();
