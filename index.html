@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Virgo Coach — Élite Assistant</title>
+  <!-- Telegram Web App SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header fisso superiore -->
+    <header class="top-header">
+      <div class="brand">
+        <div class="logo-mark">V</div>
+        <div class="brand-text">
+          <h1>VIRGO COACH</h1>
+          <span class="sub" id="current-date-badge">OGGI</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="streak-pill" id="streak-badge" title="Giorni attivi">
+          <span>🔥</span>
+          <span id="streak-count">1</span>
+        </div>
+        <div class="header-status">
+          <span class="status-dot"></span>
+          <span class="status-label">ÉLITE</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contenitore principale a schede scorrevoli -->
+    <main class="content-container">
+      
+      <!-- ===================================================================
+           TAB 1: OGGI & ROUTINE
+           =================================================================== -->
+      <section id="tab-oggi" class="tab-page active">
+        <!-- Smart Phase Banner (Adattivo all'orario) -->
+        <div class="phase-banner" id="smart-phase-banner">
+          <span class="phase-icon" id="phase-icon">⚡</span>
+          <div class="phase-info">
+            <strong id="phase-title">FASE ATTUALE</strong>
+            <span id="phase-desc">Caricamento focus orario...</span>
+          </div>
+        </div>
+
+        <div class="day-hero-card" id="day-hero">
+          <div class="day-tag" id="day-tag">LUNEDÌ — RITMO E DISCIPLINA</div>
+          <h2 id="day-title">Attività di Oggi</h2>
+          <p id="day-quote">«Nessuno deve dirti quanto vali. Rialzati e cammina a testa alta.»</p>
+
+          <!-- Barra Progresso Giornata Live -->
+          <div class="daily-progress-box">
+            <div class="progress-top">
+              <span class="progress-label">🔥 Disciplina di Oggi</span>
+              <span class="progress-pct" id="daily-progress-text">0 / 10 (0%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="daily-progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <button class="pill-btn primary" onclick="switchTab('workout')">⚡ Apri Workout</button>
+            <button class="pill-btn secondary" onclick="switchTab('cibo')">🥗 Pasti & Spesa</button>
+          </div>
+        </div>
+
+        <!-- Rito del Mattino (Quick Check) -->
+        <div class="card ritual-card">
+          <div class="card-header-flex">
+            <div class="card-header-left">
+              <span class="card-icon">💧</span>
+              <h3>Rito del Risveglio Élite (Primi 45')</h3>
+            </div>
+            <span class="mini-counter" id="ritual-counter">0/4</span>
+          </div>
+          <div class="checklist">
+            <label class="check-item">
+              <input type="checkbox" id="chk-acqua" onchange="toggleCheck(this)">
+              <span class="custom-chk"></span>
+              <span class="check-text">500 ml d'acqua fresca subito appena sveglio</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" id="chk-occhi" onchange="toggleCheck(this)">
+              <span class="custom-chk"></span>
+              <span class="check-text">Luce naturale negli occhi (apri tapparelle)</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" id="chk-social" onchange="toggleCheck(this)">
+              <span class="custom-chk"></span>
+              <span class="check-text">Zero schermi a letto (telefono fermo)</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" id="chk-movimento" onchange="toggleCheck(this)">
+              <span class="custom-chk"></span>
+              <span class="check-text">10 min di mobilità a terra / allungamento</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Il Minimo Vitale direttamente anche in Oggi per spunta rapida -->
+        <div class="card mv-card">
+          <div class="card-header-flex">
+            <div class="card-header-left">
+              <span class="card-icon">🎯</span>
+              <h3>Il Minimo Vitale (6 Punti Non Negoziabili)</h3>
+            </div>
+            <span class="mini-counter" id="mv-counter">0/6</span>
+          </div>
+          <p class="card-sub">Tocca ogni punto man mano che lo completi oggi:</p>
+          <div class="checklist" id="mv-checklist">
+            <label class="check-item">
+              <input type="checkbox" id="mv-1" onchange="toggleCheck(this)">
+              <span class="custom-chk"></span>
+              <span class="check-text">1. Sveglia senza rimandi sull'orologio</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" id="mv-2" onchange="toggleCheck(this)">
+              <span class="custom-chk"></span>
+              <span class="check-text">2. Almeno 20' di movimento / workout</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" id="mv-3" onchange="toggleCheck(this)">
+              <span class="custom-chk"></span>
+              <span class="check-text">3. Lavoro S07 o studio IVASS/OCF ≥ 60'</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" id="mv-4" onchange="toggleCheck(this)">
+              <span class="custom-chk"></span>
+              <span class="check-text">4. 3 pasti veri puliti (zero junk food)</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" id="mv-5" onchange="toggleCheck(this)">
+              <span class="custom-chk"></span>
+              <span class="check-text">5. Schermi OFF 22:30 / Luci OFF 23:00</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" id="mv-6" onchange="toggleCheck(this)">
+              <span class="custom-chk"></span>
+              <span class="check-text">6. Check-in serale completato</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Timeline della Giornata -->
+        <div class="card timeline-card">
+          <div class="card-header">
+            <span class="card-icon">⏱️</span>
+            <h3>Timeline della Giornata</h3>
+          </div>
+          <div class="timeline" id="day-timeline">
+            <!-- Popolato via JS con evidenziazione fascia oraria attuale -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 2: SPORT & WORKOUT (Palestra, Boxe, Corsa, Camminata)
+           =================================================================== -->
+      <section id="tab-workout" class="tab-page">
+        <div class="section-header">
+          <h2>Allenamento & Movimento</h2>
+          <p>La costanza dei fondamentali batte il talento ogni singolo giorno.</p>
+        </div>
+
+        <!-- Selettore Modalità Sport (Palestra, Boxe, Corsa, Camminata) -->
+        <div class="sport-mode-selector four-cols">
+          <button class="sport-btn active" id="sport-btn-palestra" onclick="switchSportMode('palestra')">
+            <span class="sport-icon">🏋️</span>
+            <span class="sport-title">Palestra</span>
+          </button>
+          <button class="sport-btn" id="sport-btn-boxe" onclick="switchSportMode('boxe')">
+            <span class="sport-icon">🥊</span>
+            <span class="sport-title">Boxe</span>
+          </button>
+          <button class="sport-btn" id="sport-btn-corsa" onclick="switchSportMode('corsa')">
+            <span class="sport-icon">🏃</span>
+            <span class="sport-title">Corsa</span>
+          </button>
+          <button class="sport-btn" id="sport-btn-camminata" onclick="switchSportMode('camminata')">
+            <span class="sport-icon">🚶</span>
+            <span class="sport-title">Camminata</span>
+          </button>
+        </div>
+
+        <!-- Selettore Giorni Settimana -->
+        <div class="day-selector" id="week-selector">
+          <button class="day-chip active" onclick="selectDayWorkout(0)">Lun</button>
+          <button class="day-chip" onclick="selectDayWorkout(1)">Mar</button>
+          <button class="day-chip" onclick="selectDayWorkout(2)">Mer</button>
+          <button class="day-chip" onclick="selectDayWorkout(3)">Gio</button>
+          <button class="day-chip" onclick="selectDayWorkout(4)">Ven</button>
+          <button class="day-chip" onclick="selectDayWorkout(5)">Sab</button>
+          <button class="day-chip" onclick="selectDayWorkout(6)">Dom</button>
+        </div>
+
+        <!-- Scheda Dettaglio Workout Dinamica -->
+        <div class="card workout-detail-card" id="workout-card">
+          <div class="badge-type" id="workout-type-badge">🏋️ PALESTRA & FORZA</div>
+          <h3 id="workout-name">Sessione di Carico & Forza</h3>
+          <p class="workout-desc" id="workout-desc">Progressione sui fondamentali, stabilità del core e stimolo muscolare pulito.</p>
+          
+          <div class="workout-tips" id="workout-tips">
+            <h4>⚡ Protocollo Esecutivo:</h4>
+            <ul>
+              <li>10' Riscaldamento articolare dinamico (spalle, anche, caviglie).</li>
+              <li>Esecuzione controllata e cadenza costante: zero ego-lifting.</li>
+              <li>Post-allenamento: 10' stretching e defaticamento per abbassare il cortisolo.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Azione rapida post-allenamento -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">✅</span>
+            <h3>Hai completato l'allenamento di oggi?</h3>
+          </div>
+          <p class="card-sub">Spunta subito il movimento nel Minimo Vitale o vai al Check-in serale:</p>
+          <div class="hero-actions">
+            <button class="pill-btn primary" onclick="markWorkoutDone()">🔥 Segna Workout Fatto</button>
+            <button class="pill-btn secondary" onclick="switchTab('checkin')">📝 Vai al Check-in</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 3: ALIMENTAZIONE (Oggi, Spesa Settimanale, Ricette)
+           =================================================================== -->
+      <section id="tab-cibo" class="tab-page">
+        <div class="section-header">
+          <h2>Carburante & Alimentazione</h2>
+          <p>Mangia per avere energia e lucidità, non per ansia o noia.</p>
+        </div>
+
+        <!-- Selettore Vista: Giornaliera vs Piano & Spesa vs Ricette -->
+        <div class="sub-tabs">
+          <button class="sub-tab-btn active" id="btn-food-daily" onclick="switchFoodView('daily')">🥗 Oggi</button>
+          <button class="sub-tab-btn" id="btn-food-weekly" onclick="switchFoodView('weekly')">🛒 Spesa & Piano</button>
+          <button class="sub-tab-btn" id="btn-food-recipes" onclick="switchFoodView('recipes')">👨‍🍳 Ricette</button>
+        </div>
+
+        <!-- VISTA GIORNALIERA -->
+        <div id="view-food-daily" class="food-view">
+          <div class="meals-grid" id="meals-daily-container">
+            <div class="meal-card">
+              <div class="meal-tag">08:00 • COLAZIONE ATLETA</div>
+              <h4>Energia Pulita & Proteine</h4>
+              <p>Skyr 200g + 40g fiocchi d'avena + frutti rossi + noci.<br><em>Oppure:</em> 3 uova strapazzate + pane integrale + caffè amaro.</p>
+            </div>
+            <div class="meal-card">
+              <div class="meal-tag">13:00 • PRANZO ANTI-CRASH</div>
+              <h4>Focus & Digeribilità (Sede Garibaldi)</h4>
+              <p>90g riso basmati/integrale + 150g petto di pollo o tonno + zucchine grigliate + 1 cucchiaio olio EVO.</p>
+            </div>
+            <div class="meal-card">
+              <div class="meal-tag">18:00 • SPUNTINO PRE-WORKOUT</div>
+              <h4>Glicogeno Rapido</h4>
+              <p>1 banana + 20g mandorle (oppure yogurt greco magro con 1 cucchiaino di miele).</p>
+            </div>
+            <div class="meal-card">
+              <div class="meal-tag">20:30 • CENA DI RECUPERO</div>
+              <h4>Protezione Sonno & Muscoli</h4>
+              <p>200g pesce bianco o salmone (o 3 uova) + abbondanti spinaci/broccoli + patata lessa o 1 fetta di segale.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- VISTA PIANO SETTIMANALE & SPESA -->
+        <div id="view-food-weekly" class="food-view" style="display: none;">
+          
+          <!-- Spesa Settimanale con Quantità per Reparto e Reset -->
+          <div class="card grocery-card">
+            <div class="card-header-flex">
+              <div class="card-header-left">
+                <span class="card-icon">🛒</span>
+                <h3>Carrello Spesa Settimanale</h3>
+              </div>
+              <span class="mini-counter" id="grocery-counter">0/16</span>
+            </div>
+            <div class="grocery-actions-bar">
+              <p class="card-sub" style="margin-bottom:0;">Tocca i prodotti mentre li metti nel carrello:</p>
+              <button class="reset-link-btn" onclick="resetGroceryList()">🔄 Svuota</button>
+            </div>
+
+            <div class="grocery-category">
+              <div class="cat-title">🥩 Proteine Nobili</div>
+              <div class="checklist">
+                <label class="check-item"><input type="checkbox" id="gr-1" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🥚 Uova fresche grandi (18–24 pezzi)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-2" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🍗 Petto di pollo / tacchino a fette (800g–1kg)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-3" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🐟 Salmone fresco / tranci di merluzzo (500g)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-4" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🐟 Tonno al naturale in vetro (6 confezioni)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-5" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🥣 Skyr naturale o yogurt greco 0% (4–5 vasetti)</span></label>
+              </div>
+            </div>
+
+            <div class="grocery-category">
+              <div class="cat-title">🌾 Carboidrati Puliti & Avena</div>
+              <div class="checklist">
+                <label class="check-item"><input type="checkbox" id="gr-6" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🌾 Fiocchi d'avena integrali (500g)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-7" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🍚 Riso Basmati o riso integrale (1 kg)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-8" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🍞 Pane di segale integrale a fette</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-9" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🥔 Patate dolci o classiche (1 kg)</span></label>
+              </div>
+            </div>
+
+            <div class="grocery-category">
+              <div class="cat-title">🥦 Verdure Fresche & Fibre</div>
+              <div class="checklist">
+                <label class="check-item"><input type="checkbox" id="gr-10" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🥦 Zucchine fresche, broccoli e spinaci</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-11" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🥗 Finocchi, insalata mista e carote</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-12" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🍅 Pomodorini datterini per pasta e insalate</span></label>
+              </div>
+            </div>
+
+            <div class="grocery-category">
+              <div class="cat-title">🥑 Grassi Sani & Frutta</div>
+              <div class="checklist">
+                <label class="check-item"><input type="checkbox" id="gr-13" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🍌 Banane (1 casco per pre-workout)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-14" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🫐 Mirtilli / Frutti di bosco per colazione</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-15" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🥜 Mandorle o noci sgusciate (200g)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-16" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🫒 Olio Extravergine d'Oliva 100% italiano</span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Matrice Settimanale Pasti -->
+          <div class="card weekly-plan-card">
+            <div class="card-header">
+              <span class="card-icon">📋</span>
+              <h3>Strategia Pasti Settimanale</h3>
+            </div>
+            <div class="weekly-plan-list">
+              <div class="plan-day-row">
+                <span class="day-badge">LUN</span>
+                <div class="plan-desc"><strong>Forza / Ring:</strong> Riso + pollo ai ferri • Snack banana/mandorle • Salmone e verdure</div>
+              </div>
+              <div class="plan-day-row">
+                <span class="day-badge">MAR</span>
+                <div class="plan-desc"><strong>Corsa / Focus:</strong> Pasta integrale tonno e pomodorini • Skyr/avena • Tacchino e finocchi</div>
+              </div>
+              <div class="plan-day-row">
+                <span class="day-badge">MER</span>
+                <div class="plan-desc"><strong>Palestra / Ring:</strong> Riso basmati e macinato magro • Yogurt greco • Orata al forno</div>
+              </div>
+              <div class="plan-day-row">
+                <span class="day-badge">GIO</span>
+                <div class="plan-desc"><strong>Corsa / Ufficio:</strong> Riso nero gamberetti/legumi • 3 uova strapazzate • Frittata leggera</div>
+              </div>
+              <div class="plan-day-row">
+                <span class="day-badge">VEN</span>
+                <div class="plan-desc"><strong>Core & Transizione:</strong> Pollo alla piastra e melanzane • Cena serena relax con Angela</div>
+              </div>
+              <div class="plan-day-row">
+                <span class="day-badge">SAB</span>
+                <div class="plan-desc"><strong>Corsa Lunga & Spesa:</strong> Colazione ricca post-corsa • Tigelle o Gambero Pork la sera</div>
+              </div>
+              <div class="plan-day-row">
+                <span class="day-badge">DOM</span>
+                <div class="plan-desc"><strong>Camminata & Meal Prep:</strong> Cottura riso e verdure per 4 giorni • Cena distensiva</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VISTA RICETTE VELOCI & PREFERITE DAL VAULT -->
+        <div id="view-food-recipes" class="food-view" style="display: none;">
+          <div class="meals-grid">
+            <div class="meal-card highlight-recipe">
+              <div class="meal-tag">🏆 RICETTA D'AUTORE DEL VAULT • SERATA RELAX</div>
+              <h4>🍤 La Gambero Pork (Specialità di Simone)</h4>
+              <p><strong>Ingredienti:</strong> Paccheri di qualità, gamberi freschi, guanciale croccante, pesto, stracciatella fresca.<br><strong>Topping:</strong> Granella di pistacchi, mandorle o nocciole tostate.</p>
+            </div>
+            <div class="meal-card">
+              <div class="meal-tag">🥞 COLAZIONE SABATO POST-CORSA (10 MIN)</div>
+              <h4>Pancake Atleta Avena & Albumi</h4>
+              <p><strong>Mix:</strong> 50g farina/fiocchi d'avena + 150ml albume (o 1 uovo intero + 100ml albume) + pizzico cannella. Cuoci 2 min per lato in padella antiaderente. Guarnisci con mirtilli e 1 cucchiaino di burro d'arachidi o miele.</p>
+            </div>
+            <div class="meal-card">
+              <div class="meal-tag">🍱 MEAL PREP DOMENICA (4 PRANZI S07)</div>
+              <h4>Bowl Garibaldi Anti-Crash</h4>
+              <p><strong>Batch cooking:</strong> Lessa 360g di riso basmati (90g x 4). Griglia 600g di petto di pollo a cubetti con erbe aromatiche e 4 zucchine a rondelle. Dividi in 4 schiscette: a filo 1 cucchiaio d'olio EVO a crudo.</p>
+            </div>
+            <div class="meal-card">
+              <div class="meal-tag">🐟 CENA RECUPERO LAMPO (15 MIN)</div>
+              <h4>Salmone & Broccoli Express</h4>
+              <p><strong>In forno/airfryer:</strong> Trancio di salmone da 200g con limone, pepe nero e aneto a 190°C per 14 minuti, accompagnato da broccoli al vapore conditi con olio EVO e sale marino.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 4: CARRIERA & GUERRIERI (Strada B + Mindset)
+           =================================================================== -->
+      <section id="tab-mentori" class="tab-page">
+        <div class="section-header">
+          <h2>Percorso & Guerrieri</h2>
+          <p>La scalata professionale reale e le ancore di forza mentale.</p>
+        </div>
+
+        <!-- Selettore Sotto-Schede: Carriera vs Guerrieri vs Fede -->
+        <div class="sub-tabs">
+          <button class="sub-tab-btn active" id="btn-sub-career" onclick="switchMentorView('career')">💼 Carriera S07</button>
+          <button class="sub-tab-btn" id="btn-sub-warriors" onclick="switchMentorView('warriors')">⚔️ Guerrieri</button>
+          <button class="sub-tab-btn" id="btn-sub-faith" onclick="switchMentorView('faith')">✝️ Fede</button>
+        </div>
+
+        <!-- VISTA CARRIERA (Sincronizzata con Coach_Office) -->
+        <div id="view-career" class="mentor-view">
+          <div class="card career-hub-card">
+            <div class="career-top-badge">
+              <span>🏛️ SEDE S07 — VIA GARIBALDI 7, TORINO</span>
+            </div>
+            <h3>Welfare Coach Academy</h3>
+            <p class="company-sub">Italiana Assicurazioni (Reale Group) • Mentor: <strong>Luca Cucciatti</strong></p>
+            
+            <div class="career-pillars">
+              <div class="pillar-item">
+                <div class="pillar-label">OBIETTIVO STRATEGICO:</div>
+                <div class="pillar-val">Consulente Assicurativo & Finanziario OCF</div>
+              </div>
+              <div class="pillar-item">
+                <div class="pillar-label">TRAGUARDO RACCOLTA:</div>
+                <div class="pillar-val gold">5.000.000 € AUM (4 Anni)</div>
+              </div>
+            </div>
+
+            <!-- Moduli Superati -->
+            <div class="exam-progress-box">
+              <h4>🎓 Stato Avanzamento Reale:</h4>
+              <div class="exam-row done">
+                <span class="exam-icon">✅</span>
+                <div class="exam-info">
+                  <strong>Polizze Collettive & Welfare Aziendale</strong>
+                  <span>7/7 Moduli completati • Test superato: <strong>87.5%</strong></span>
+                </div>
+              </div>
+              <div class="exam-row done">
+                <span class="exam-icon">🏆</span>
+                <div class="exam-info">
+                  <strong>Valutazione Opzioni Investimento IDD</strong>
+                  <span>5/5 Moduli completati • Test superato: <strong>100%</strong></span>
+                </div>
+              </div>
+              <div class="exam-row current">
+                <span class="exam-icon">⏳</span>
+                <div class="exam-info">
+                  <strong>Corso IVASS 60 Ore & Iscrizione RUI Sez. E</strong>
+                  <span>Completamento moduli formativi e preparazione test</span>
+                </div>
+              </div>
+              <div class="exam-row next">
+                <span class="exam-icon">🎯</span>
+                <div class="exam-info">
+                  <strong>Esame Albo Consulenti Finanziari (OCF)</strong>
+                  <span>Obiettivo successivo post-abilitazione RUI</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="career-quote-box">
+              «Questa è la strada che ho scelto per la mia vita: zero distrazioni esterne, competenza feroce, indipendenza economica e protezione del patrimonio familiare.»
+            </div>
+          </div>
+        </div>
+
+        <!-- VISTA GUERRIERI -->
+        <div id="view-warriors" class="mentor-view" style="display: none;">
+          <div class="warrior-swipe-card" id="warrior-card">
+            <div class="warrior-author" id="w-author">🐉 GIUSEPPE — Il Vero Drago</div>
+            <div class="warrior-quote" id="w-quote">«Simo, nessuno deve dirti quanto vali.»</div>
+            <div class="warrior-focus" id="w-focus">💡 <strong>Focus:</strong> Nessun calo di forma o intoppo passeggero ha il potere di definire il tuo valore. Rialzati e cammina a testa alta.</div>
+            <div class="card-footer-action">
+              <button class="pill-btn primary full" onclick="nextWarrior()">🎲 Prossimo Mentore</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VISTA FEDE -->
+        <div id="view-faith" class="mentor-view" style="display: none;">
+          <div class="faith-swipe-card" id="faith-card">
+            <div class="faith-ref" id="f-ref">✝️ ISAIA 43:2</div>
+            <div class="faith-quote" id="f-quote">«Se dovrai attraversare le acque, io sarò con te. I fiumi non ti sommergeranno. Se dovrai camminare nel fuoco, non ti scotterai. La fiamma non ti brucerà.»</div>
+            <div class="faith-focus" id="f-focus">🕊️ Non sei solo nella fatica. La forza di ripartire è già custodita dentro di te.</div>
+            <div class="card-footer-action">
+              <button class="pill-btn primary full" onclick="nextFaith()">🕊️ Prossimo Versetto</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 5: CHECK-IN RAPIDO & STORICO
+           =================================================================== -->
+      <section id="tab-checkin" class="tab-page">
+        <div class="section-header">
+          <h2>Check-in Giornaliero</h2>
+          <p>Registra la giornata in 15 secondi direttamente nel Vault Virgo.</p>
+        </div>
+
+        <div class="card form-card">
+          <form id="checkin-form" onsubmit="submitCheckin(event)">
+            
+            <!-- 1. Attività Svolta (Palestra, Corsa, Camminata, Boxe, Riposo) -->
+            <div class="form-group">
+              <label class="form-label">⚡ Quale attività hai svolto oggi?</label>
+              <div class="segmented-control wrap-segmented">
+                <input type="radio" name="workout_done" id="wo-palestra" value="🏋️ Palestra" checked>
+                <label for="wo-palestra">🏋️ Palestra</label>
+                
+                <input type="radio" name="workout_done" id="wo-boxe" value="🥊 Boxe">
+                <label for="wo-boxe">🥊 Boxe</label>
+
+                <input type="radio" name="workout_done" id="wo-corsa" value="🏃 Corsa">
+                <label for="wo-corsa">🏃 Corsa</label>
+                
+                <input type="radio" name="workout_done" id="wo-camminata" value="🚶 Camminata">
+                <label for="wo-camminata">🚶 Camminata</label>
+                
+                <input type="radio" name="workout_done" id="wo-riposo" value="💤 Riposo">
+                <label for="wo-riposo">💤 Riposo</label>
+              </div>
+            </div>
+
+            <!-- 2. Alimentazione -->
+            <div class="form-group">
+              <label class="form-label">🥗 Com'è andata l'alimentazione?</label>
+              <div class="segmented-control">
+                <input type="radio" name="food_score" id="food-clean" value="100% Pulita" checked>
+                <label for="food-clean">🥦 100% Pulita</label>
+                
+                <input type="radio" name="food_score" id="food-ok" value="Buona">
+                <label for="food-ok">⚖️ Buona</label>
+                
+                <input type="radio" name="food_score" id="food-junk" value="Sgarro">
+                <label for="food-junk">⚠️ Sgarro</label>
+              </div>
+            </div>
+
+            <!-- 3. Energia Slider -->
+            <div class="form-group">
+              <div class="slider-header">
+                <label class="form-label">⚡ Livello Energia & Lucidità:</label>
+                <span class="slider-val" id="energy-val">8 / 10</span>
+              </div>
+              <input type="range" min="1" max="10" value="8" class="range-slider" id="energy-slider" oninput="updateEnergyVal(this.value)">
+            </div>
+
+            <!-- 4. Note Libere -->
+            <div class="form-group">
+              <label class="form-label">📝 Riflessioni, studio IVASS/S07 o sensazioni:</label>
+              <textarea id="checkin-notes" rows="3" placeholder="Es. Ottima sessione, moduli IVASS studiati, serata serena con Angela..."></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn" id="btn-submit-checkin">
+              <span>🚀 Salva Check-in in Virgo</span>
+            </button>
+          </form>
+        </div>
+
+        <div id="checkin-feedback" class="feedback-msg" style="display: none;"></div>
+
+        <!-- Storico ultimi Check-in salvati sul dispositivo -->
+        <div class="card" id="checkin-history-card">
+          <div class="card-header">
+            <span class="card-icon">📚</span>
+            <h3>Ultimi Check-in Registrati</h3>
+          </div>
+          <div id="checkin-history-list" class="history-list">
+            <p class="card-sub">Nessun check-in recente registrato su questo dispositivo.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Navigazione Inferiore Fissa (TabBar Mobile) -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="switchTab('oggi')" id="nav-oggi">
+        <span class="nav-icon">🗓️</span>
+        <span class="nav-label">Oggi</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('workout')" id="nav-workout">
+        <span class="nav-icon">⚡</span>
+        <span class="nav-label">Sport</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('cibo')" id="nav-cibo">
+        <span class="nav-icon">🥗</span>
+        <span class="nav-label">Pasti</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('mentori')" id="nav-mentori">
+        <span class="nav-icon">🏛️</span>
+        <span class="nav-label">Carriera</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('checkin')" id="nav-checkin">
+        <span class="nav-icon">📝</span>
+        <span class="nav-label">Check-in</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
