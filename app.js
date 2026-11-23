@@ -295,9 +295,41 @@ const GROCERY_IDS = [
 ];
 
 // =============================================================================
-// INIZIALIZZAZIONE UI (Zero Attrito)
+// PIN 1212 (Richiesto solo la prima volta sul dispositivo)
+// =============================================================================
+const USER_PIN = "1212";
+
+function checkPinAccess() {
+  if (localStorage.getItem("virgo_pin_1212_ok") === "1") {
+    unlockAppUI();
+  }
+}
+
+function unlockWithPin() {
+  const val = document.getElementById("pin-input")?.value.trim();
+  if (val === USER_PIN) {
+    haptic("success");
+    localStorage.setItem("virgo_pin_1212_ok", "1");
+    unlockAppUI();
+  } else {
+    haptic("warning");
+    const err = document.getElementById("pin-error");
+    if (err) err.style.display = "block";
+  }
+}
+
+function unlockAppUI() {
+  const lock = document.getElementById("privacy-lock-screen");
+  const app = document.getElementById("app");
+  if (lock) lock.style.display = "none";
+  if (app) app.style.display = "flex";
+}
+
+// =============================================================================
+// INIZIALIZZAZIONE UI
 // =============================================================================
 document.addEventListener("DOMContentLoaded", () => {
+  checkPinAccess();
   checkDailyAutoReset();
   renderSmartPhase();
   renderToday();
