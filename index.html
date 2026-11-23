@@ -14,7 +14,19 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="app">
+  <!-- Blocco PIN 1212 -->
+  <div id="privacy-lock-screen" style="position:fixed;inset:0;z-index:9999;background:#08090d;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
+    <div style="width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;font-family:'Outfit',sans-serif;font-weight:800;font-size:1.8rem;display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 0 24px rgba(229,169,59,0.4);">V</div>
+    <h2 style="font-family:'Outfit',sans-serif;color:#fff;margin-bottom:6px;">VIRGO COACH</h2>
+    <p style="font-size:0.84rem;color:#94a3b8;max-width:260px;margin-bottom:20px;">Inserisci il tuo PIN a 4 cifre per entrare:</p>
+    <div style="display:flex;gap:8px;width:100%;max-width:220px;">
+      <input type="password" inputmode="numeric" maxlength="4" id="pin-input" placeholder="••••" oninput="if(this.value==='1212') unlockWithPin()" style="flex:1;background:#11141c;border:1px solid #232b3d;border-radius:10px;padding:10px 12px;color:#fff;text-align:center;font-size:1.2rem;letter-spacing:0.25em;outline:none;">
+      <button onclick="unlockWithPin()" style="background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:10px;padding:10px 16px;font-weight:800;color:#000;cursor:pointer;">OK</button>
+    </div>
+    <p id="pin-error" style="color:#ef4444;font-size:0.78rem;margin-top:10px;display:none;">PIN errato.</p>
+  </div>
+
+  <div id="app" style="display:none;">
     <!-- Header fisso superiore -->
     <header class="top-header">
       <div class="brand">
@@ -452,18 +464,18 @@
                   <span>5/5 Moduli completati • Test superato: <strong>100%</strong></span>
                 </div>
               </div>
-              <div class="exam-row current">
-                <span class="exam-icon">⏳</span>
+              <div class="exam-row done">
+                <span class="exam-icon">🏆</span>
                 <div class="exam-info">
                   <strong>Corso IVASS 60 Ore & Iscrizione RUI Sez. E</strong>
-                  <span>Completamento moduli formativi e preparazione test</span>
+                  <span>Esame finale superato • Abilitato RUI Sezione E (100%)</span>
                 </div>
               </div>
-              <div class="exam-row next">
+              <div class="exam-row current">
                 <span class="exam-icon">🎯</span>
                 <div class="exam-info">
-                  <strong>Esame Albo Consulenti Finanziari (OCF)</strong>
-                  <span>Obiettivo successivo post-abilitazione RUI</span>
+                  <strong>Consulenza S07 & Percorso Albo OCF</strong>
+                  <span>Operatività in Agenzia e preparazione Consulente Finanziario</span>
                 </div>
               </div>
             </div>
