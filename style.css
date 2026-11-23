@@ -1,0 +1,1198 @@
+/* ==========================================================================
+   VIRGO COACH MINI APP — STYLESHEET ÉLITE
+   Aesthetic: Dark Obsidian, Titanium Bronze, Brushed Gold, Cyan Glow
+   Designed for Mobile (Samsung S24 Ultra) & Telegram Web App
+   ========================================================================== */
+
+:root {
+  --bg-base: #08090d;
+  --bg-surface: #11141c;
+  --bg-card: #161b26;
+  --bg-card-hover: #1c2333;
+  --border-subtle: #232b3d;
+  --border-gold: rgba(229, 169, 59, 0.4);
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  
+  --gold-primary: #e5a93b;
+  --gold-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+  --cyan-accent: #38bdf8;
+  --green-accent: #10b981;
+  --red-accent: #ef4444;
+
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 16px);
+  
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Outfit', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  user-select: none;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: calc(75px + var(--safe-area-bottom));
+}
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+.top-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(14px + var(--safe-area-top)) 18px 14px;
+  background: rgba(8, 9, 13, 0.85);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--gold-gradient);
+  color: #000;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(229, 169, 59, 0.35);
+}
+
+.brand-text h1 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+
+.brand-text .sub {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--gold-primary);
+  letter-spacing: 0.08em;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green-accent);
+  box-shadow: 0 0 8px var(--green-accent);
+}
+
+.status-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--green-accent);
+  letter-spacing: 0.06em;
+}
+
+/* ==========================================================================
+   MAIN CONTENT & TABS
+   ========================================================================== */
+.content-container {
+  flex: 1;
+  padding: 16px;
+}
+
+.tab-page {
+  display: none;
+  animation: fadeIn 0.22s ease-out forwards;
+}
+
+.tab-page.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-header {
+  margin-bottom: 16px;
+}
+
+.section-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.section-header p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   CARDS GENERALI
+   ========================================================================== */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.card-icon {
+  font-size: 1.25rem;
+}
+
+.card-header h3 {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.card-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+/* ==========================================================================
+   TAB 1: OGGI HERO & TIMELINE
+   ========================================================================== */
+.day-hero-card {
+  background: linear-gradient(145deg, #151b29, #0d121c);
+  border: 1px solid var(--border-gold);
+  border-radius: 18px;
+  padding: 20px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(229, 169, 59, 0.08);
+}
+
+.day-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--gold-primary);
+  background: rgba(229, 169, 59, 0.12);
+  padding: 4px 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.day-hero-card h2 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.day-hero-card p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+.hero-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.pill-btn {
+  border: none;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.pill-btn:active {
+  transform: scale(0.97);
+}
+
+.pill-btn.primary {
+  background: var(--gold-gradient);
+  color: #000;
+  box-shadow: 0 4px 12px rgba(229, 169, 59, 0.25);
+}
+
+.pill-btn.secondary {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+}
+
+.pill-btn.full {
+  width: 100%;
+}
+
+/* Timeline */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 14px;
+  position: relative;
+}
+
+.time-col {
+  width: 52px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--gold-primary);
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.desc-col {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 2px solid var(--border-subtle);
+  padding: 4px 10px 8px 12px;
+}
+
+.desc-col strong {
+  display: block;
+  font-size: 0.86rem;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.desc-col span {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   CHECKLISTS
+   ========================================================================== */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.check-item:active {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.check-item input[type="checkbox"] {
+  display: none;
+}
+
+.custom-chk {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.check-item input:checked + .custom-chk {
+  background: var(--gold-primary);
+  border-color: var(--gold-primary);
+}
+
+.check-item input:checked + .custom-chk::after {
+  content: "✓";
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.check-item input:checked ~ .check-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.check-text {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   TAB 2: WORKOUT
+   ========================================================================== */
+/* ==========================================================================
+   TAB 2: SPORT (PALESTRA, CORSA, CAMMINATA)
+   ========================================================================== */
+.sport-mode-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.sport-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 10px 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sport-btn .sport-icon {
+  font-size: 1.35rem;
+}
+
+.sport-btn .sport-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.sport-btn.active {
+  background: var(--bg-card);
+  border-color: var(--gold-primary);
+  box-shadow: 0 4px 14px rgba(229, 169, 59, 0.2);
+}
+
+.sport-btn.active .sport-title {
+  color: var(--gold-primary);
+}
+
+.day-selector {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  scrollbar-width: none;
+}
+.day-selector::-webkit-scrollbar { display: none; }
+
+.day-chip {
+  flex: 1;
+  min-width: 44px;
+  padding: 8px 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.day-chip.active {
+  background: var(--gold-gradient);
+  color: #000;
+  border-color: var(--gold-primary);
+  box-shadow: 0 4px 10px rgba(229, 169, 59, 0.25);
+}
+
+.workout-detail-card {
+  border-left: 4px solid var(--gold-primary);
+}
+
+.badge-type {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--cyan-accent);
+  margin-bottom: 6px;
+}
+
+.workout-detail-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.workout-desc {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.workout-tips h4 {
+  font-size: 0.8rem;
+  color: var(--gold-primary);
+  margin-bottom: 6px;
+}
+
+.workout-tips ul {
+  padding-left: 18px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ==========================================================================
+   TAB 3: CARBURANTE / MEALS
+   ========================================================================== */
+.meals-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.meal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.meal-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--gold-primary);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.meal-card h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.meal-card p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   PIANO SETTIMANALE & SPESA
+   ========================================================================== */
+.weekly-plan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plan-day-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 8px 10px;
+  border-radius: 10px;
+  border-left: 2px solid var(--border-subtle);
+}
+
+.day-badge {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--gold-primary);
+  width: 36px;
+  flex-shrink: 0;
+}
+
+.plan-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.plan-desc strong {
+  color: #fff;
+}
+
+.grocery-category {
+  margin-top: 14px;
+}
+
+.cat-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--cyan-accent);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   TAB 4: CARRIERA HUB & GUERRIERI
+   ========================================================================== */
+.career-hub-card {
+  border-left: 4px solid var(--gold-primary);
+  background: linear-gradient(145deg, #161c28, #10141f);
+}
+
+.career-top-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--gold-primary);
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  background: rgba(229, 169, 59, 0.12);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.career-hub-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.company-sub {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.career-pillars {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+}
+
+.pillar-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+.pillar-val {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.pillar-val.gold {
+  color: var(--gold-primary);
+}
+
+.exam-progress-box {
+  margin-bottom: 16px;
+}
+
+.exam-progress-box h4 {
+  font-size: 0.82rem;
+  color: var(--cyan-accent);
+  margin-bottom: 10px;
+}
+
+.exam-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  margin-bottom: 6px;
+}
+
+.exam-row.done {
+  border-left: 3px solid var(--green-accent);
+}
+
+.exam-row.current {
+  border-left: 3px solid var(--gold-primary);
+}
+
+.exam-row.next {
+  border-left: 3px solid var(--text-muted);
+}
+
+.exam-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.exam-info strong {
+  font-size: 0.82rem;
+  color: #fff;
+}
+
+.exam-info span {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.career-quote-box {
+  background: rgba(229, 169, 59, 0.06);
+  border: 1px solid rgba(229, 169, 59, 0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.wrap-segmented {
+  flex-wrap: wrap;
+}
+
+.wrap-segmented label {
+  min-width: 30%;
+}
+
+/* ==========================================================================
+   TAB 4: GUERRIERI & FEDE
+   ========================================================================== */
+.sub-tabs {
+  display: flex;
+  background: var(--bg-surface);
+  padding: 4px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border-subtle);
+}
+
+.sub-tab-btn {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sub-tab-btn.active {
+  background: var(--bg-card);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.warrior-swipe-card, .faith-swipe-card {
+  background: linear-gradient(145deg, #182030, #101520);
+  border: 1px solid rgba(229, 169, 59, 0.3);
+  border-radius: 18px;
+  padding: 22px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.faith-swipe-card {
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.warrior-author, .faith-ref {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--gold-primary);
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+
+.faith-ref {
+  color: var(--cyan-accent);
+}
+
+.warrior-quote, .faith-quote {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.45;
+  margin-bottom: 14px;
+}
+
+.warrior-focus, .faith-focus {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 12px;
+  margin-bottom: 18px;
+}
+
+.career-card {
+  border-left: 4px solid var(--cyan-accent);
+}
+
+.career-card p {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+.career-card .small-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.quote-box {
+  margin-top: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--cyan-accent);
+}
+
+/* ==========================================================================
+   TAB 5: CHECK-IN RAPIDO FORM
+   ========================================================================== */
+.form-card {
+  padding: 20px 18px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.segmented-control {
+  display: flex;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.segmented-control input[type="radio"] {
+  display: none;
+}
+
+.segmented-control label {
+  flex: 1;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 8px 0;
+  color: var(--text-muted);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.segmented-control input[type="radio"]:checked + label {
+  background: var(--bg-card);
+  color: var(--gold-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.slider-val {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--gold-primary);
+}
+
+.range-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 4px;
+  background: var(--bg-surface);
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--gold-primary);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(229, 169, 59, 0.5);
+}
+
+textarea {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  color: #fff;
+  outline: none;
+  resize: none;
+}
+
+textarea:focus {
+  border-color: var(--gold-primary);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--gold-gradient);
+  border: none;
+  border-radius: 14px;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #000;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(229, 169, 59, 0.3);
+  transition: transform 0.1s;
+}
+
+.submit-btn:active {
+  transform: scale(0.98);
+}
+
+.feedback-msg {
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 14px;
+}
+
+.feedback-msg.success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: var(--green-accent);
+}
+
+/* ==========================================================================
+   BOTTOM NAV BAR (TABBAR)
+   ========================================================================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: rgba(10, 12, 17, 0.95);
+  backdrop-filter: blur(18px);
+  border-top: 1px solid var(--border-subtle);
+  padding: 8px 6px calc(8px + var(--safe-area-bottom));
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: color 0.15s, transform 0.1s;
+}
+
+.nav-item:active {
+  transform: scale(0.92);
+}
+
+.nav-icon {
+  font-size: 1.25rem;
+}
+
+.nav-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.nav-item.active {
+  color: var(--gold-primary);
+}
+
+
+/* ==========================================================================
+   V3 UPGRADES: LIVE PROGRESS BAR, SMART PHASE, TIMELINE ACTIVE SLOT, HISTORY
+   ========================================================================== */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.streak-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(229, 169, 59, 0.14);
+  border: 1px solid rgba(229, 169, 59, 0.35);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--gold-primary);
+}
+
+.phase-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(22, 27, 38, 0.9));
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.phase-icon {
+  font-size: 1.4rem;
+}
+
+.phase-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.phase-info strong {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--cyan-accent);
+}
+
+.phase-info span {
+  font-size: 0.8rem;
+  color: var(--text-primary);
+}
+
+.daily-progress-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+}
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.progress-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.progress-pct {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--gold-primary);
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #10b981);
+  border-radius: 6px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.card-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-header-left h3 {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.mini-counter {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--gold-primary);
+  background: rgba(229, 169, 59, 0.14);
+  border: 1px solid rgba(229, 169, 59, 0.3);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.sport-mode-selector.four-cols {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.timeline-item.active-slot .desc-col {
+  border-left: 3px solid var(--gold-primary);
+  background: rgba(229, 169, 59, 0.08);
+  border-radius: 0 10px 10px 0;
+}
+
+.now-tag {
+  display: inline-block;
+  margin-top: 3px;
+  font-size: 0.62rem;
+  font-weight: 900;
+  color: #000;
+  background: var(--gold-primary);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.grocery-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.reset-link-btn {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.highlight-recipe {
+  border: 1px solid var(--border-gold);
+  background: linear-gradient(145deg, #191f2e, #121621);
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-item {
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid var(--green-accent);
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.history-date {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--green-accent);
+  margin-bottom: 2px;
+}
+
+.history-text {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
