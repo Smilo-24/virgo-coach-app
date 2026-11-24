@@ -337,6 +337,10 @@ document.addEventListener("DOMContentLoaded", () => {
   loadChecklistState();
   updateAllCounters();
   renderCheckinHistory();
+  initReadingBookTracker();
+  renderChainHeatmap();
+  calculateS07Commission();
+  updateTimerClockDisplay();
 
   // Deep-link diretto alla scheda richiesta (es. ?tab=checkin, ?tab=workout, ?tab=cibo, ?tab=q360)
   const params = new URLSearchParams(window.location.search);
@@ -524,7 +528,7 @@ function getBookQuotesList() {
 
 function switchMentorView(view) {
   haptic("light");
-  ["career", "warriors", "books", "faith"].forEach(v => {
+  ["career", "warriors", "books", "cinema", "faith"].forEach(v => {
     const btn = document.getElementById(`btn-sub-${v}`);
     const box = document.getElementById(`view-${v}`);
     if (btn) btn.classList.toggle("active", v === view);
@@ -827,6 +831,11 @@ const VAULT_CATEGORIES_META = {
     file: "08_cultura/LIBRERIA.md (Sezione Frasi & Concetti dai Libri)",
     titlePh: "Titolo del Libro / Autore (es. Jim Rohn - I 5 Pezzi del Puzzle)...",
     contentPh: "Scrivi o detta la frase del libro o l'insegnamento che vuoi salvare e atomizzare nel Vault..."
+  },
+  cinema: {
+    file: "08_cultura/CINEMA_SERIE_TV.md (+ Catalogo Opere nell'App)",
+    titlePh: "Titolo Film o Serie TV (es. Cinderella Man, Peaky Blinders)...",
+    contentPh: "Area di appartenenza (Mente, Guerrieri, Carriera...), voto e lezione che ti ha colpito..."
   },
   youtube: {
     file: "08_cultura/LIBRERIA.md + Inbox Link YouTube/Podcast",
@@ -1432,4 +1441,476 @@ async function copyQ360Answers(fromSyncFallback = false) {
   } catch (e) {
     showQ360Feedback("✅ Risposte salvate nella memoria del dispositivo!");
   }
+}
+
+// =============================================================================
+// 🎬 CINEMA & SERIE TV VIRGO (08_cultura/CINEMA_SERIE_TV.md)
+// =============================================================================
+const CINEMA_ENTRIES = [
+  {
+    title: "🍔 THE FOUNDER (Ray Kroc)",
+    type: "Film",
+    area: "🧠 05_mente & 💼 04_carriera",
+    quote: "«Niente al mondo può sostituire la perseveranza. Solo la determinazione e la perseveranza sono onnipotenti.»",
+    focus: "A 52 anni, rifiutato dalle banche, non ha smesso di crederci per un solo secondo. Chi ha costanza vince sempre sul talento svogliato."
+  },
+  {
+    title: "🥊 CINDERELLA MAN (Jim Braddock)",
+    type: "Film",
+    area: "⚔️ 07_guerrieri & ❤️ 03_relazioni",
+    quote: "«Stavolta so per cosa combatto: per il latte dei miei figli.»",
+    focus: "Quando lotti per la tua famiglia e per la dignità del focolare, hai una riserva di forza inesauribile che chi combatte per l'ego non avrà mai."
+  },
+  {
+    title: "🥊 ROCKY BALBOA (Saga)",
+    type: "Film",
+    area: "⚔️ 07_guerrieri & 🧠 05_mente",
+    quote: "«Non è importante come colpisci, l'importante è come sai resistere ai colpi, come ricominci e se finisci la corsa.»",
+    focus: "Incassa il colpo della giornata, stringi i denti e muoviti sempre in avanti."
+  },
+  {
+    title: "💼 LA RICERCA DELLA FELICITÀ (Chris Gardner)",
+    type: "Film",
+    area: "🧠 05_mente & 💼 04_carriera",
+    quote: "«Se hai un sogno lo devi proteggere. Quando le persone non sanno fare qualcosa lo dicono a te che non la sai fare. Se vuoi qualcosa, vai e inseguila. Punto.»",
+    focus: "Fai più chiamate di tutti, cura ogni dettaglio e non permettere a nessuno di dirti che non vali."
+  },
+  {
+    title: "🎩 PEAKY BLINDERS (Thomas Shelby)",
+    type: "Serie",
+    area: "🧠 05_mente & 🏛️ 08_cultura",
+    quote: "«Non c'è riposo per me in questo mondo. Forse nel prossimo.»",
+    focus: "Compostezza glaciale, controllo assoluto delle emozioni e scacchiera pensata a tre mosse avanti."
+  },
+  {
+    title: "👔 SUITS (Harvey Specter)",
+    type: "Serie",
+    area: "💼 04_carriera",
+    quote: "«Non gioco secondo le probabilità, gioco secondo l'uomo che ho di fronte.»",
+    focus: "La sicurezza si fonda sulla preparazione feroce prima di entrare nella stanza."
+  },
+  {
+    title: "✝️ LE ALI DELLA LIBERTÀ (Andy Dufresne)",
+    type: "Film",
+    area: "✝️ 06_fede & 🧠 05_mente",
+    quote: "«La paura può farti prigioniero, la speranza può renderti libero.»",
+    focus: "Costanza silenziosa: scavando la roccia ogni giorno con un piccolo cucchiaio, la libertà arriva."
+  }
+];
+let currentCinemaIdx = 0;
+
+function nextCinemaQuote() {
+  haptic("medium");
+  const customC = JSON.parse(localStorage.getItem("virgo_custom_cinema") || "[]");
+  const allC = [...customC, ...CINEMA_ENTRIES];
+  currentCinemaIdx = (currentCinemaIdx + 1) % allC.length;
+  const c = allC[currentCinemaIdx];
+  const tEl = document.getElementById("c-title");
+  const bEl = document.getElementById("c-badge");
+  const qEl = document.getElementById("c-quote");
+  const fEl = document.getElementById("c-focus");
+  if (tEl) tEl.innerText = c.title;
+  if (bEl) bEl.innerText = `${c.type ? c.type + " • " : ""}${c.area}`;
+  if (qEl) qEl.innerText = c.quote;
+  if (fEl) fEl.innerHTML = `🎬 <strong>Lezione Archetipica:</strong> ${c.focus}`;
+}
+
+async function submitNewCinemaEntry() {
+  haptic("success");
+  const tEl = document.getElementById("cinema-input-title");
+  const typeEl = document.getElementById("cinema-input-type");
+  const areaEl = document.getElementById("cinema-input-area");
+  const noteEl = document.getElementById("cinema-input-note");
+  const feedbackEl = document.getElementById("cinema-save-feedback");
+
+  const title = (tEl?.value || "").trim();
+  const type = typeEl?.value || "Film";
+  const area = areaEl?.value || "🧠 05_mente";
+  const note = (noteEl?.value || "").trim();
+
+  if (!title) {
+    if (feedbackEl) {
+      feedbackEl.style.display = "block";
+      feedbackEl.innerText = "Inserisci almeno il titolo del film o serie tv!";
+    }
+    return;
+  }
+
+  const newEntry = {
+    title: `${type === "Film" ? "🎬" : "📺"} ${title.toUpperCase()}`,
+    type: type,
+    area: area,
+    quote: note ? `«${note}»` : "«Lezione registrata da Simone nel Vault.»",
+    focus: note || "Opera cinematografica integrata nel patrimonio di Virgo."
+  };
+
+  const customC = JSON.parse(localStorage.getItem("virgo_custom_cinema") || "[]");
+  customC.unshift(newEntry);
+  localStorage.setItem("virgo_custom_cinema", JSON.stringify(customC));
+
+  try {
+    await fetch("http://127.0.0.1:8765/vault_entry", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        cat: "cinema",
+        title: `${title} (${type})`,
+        content: `Area: ${area} — Note: ${note || "Nessuna nota aggiuntiva"}`
+      })
+    });
+  } catch (e) {}
+
+  if (tEl) tEl.value = "";
+  if (noteEl) noteEl.value = "";
+  if (feedbackEl) {
+    feedbackEl.style.display = "block";
+    feedbackEl.innerText = `✅ "${title}" salvato nel Vault e aggiunto alla rotazione!`;
+    setTimeout(() => { feedbackEl.style.display = "none"; }, 4000);
+  }
+  nextCinemaQuote();
+}
+
+// =============================================================================
+// 📖 TRACKER LIBRO IN LETTURA (Pagina X di Y)
+// =============================================================================
+function initReadingBookTracker() {
+  const data = JSON.parse(localStorage.getItem("virgo_reading_book") || JSON.stringify({
+    title: "I 5 Pezzi del Puzzle della Vita — Jim Rohn",
+    current: 42,
+    total: 140
+  }));
+  updateReadingBookUI(data);
+}
+
+function updateReadingBookUI(data) {
+  const tEl = document.getElementById("reading-book-title");
+  const pctEl = document.getElementById("reading-progress-pct");
+  const pagesEl = document.getElementById("reading-pages-text");
+  const remEl = document.getElementById("reading-remaining-text");
+  const fillEl = document.getElementById("reading-progress-fill");
+
+  const pct = Math.min(100, Math.max(0, Math.round((data.current / data.total) * 100)));
+  const rem = Math.max(0, data.total - data.current);
+
+  if (tEl) tEl.innerText = data.title;
+  if (pctEl) pctEl.innerText = `${pct}%`;
+  if (pagesEl) pagesEl.innerText = `Pagina ${data.current} di ${data.total}`;
+  if (remEl) remEl.innerText = `${rem} pag. mancanti`;
+  if (fillEl) fillEl.style.width = `${pct}%`;
+
+  localStorage.setItem("virgo_reading_book", JSON.stringify(data));
+}
+
+function adjustReadingPage(delta) {
+  haptic("selection");
+  const data = JSON.parse(localStorage.getItem("virgo_reading_book") || JSON.stringify({
+    title: "I 5 Pezzi del Puzzle della Vita — Jim Rohn",
+    current: 42,
+    total: 140
+  }));
+  data.current = Math.min(data.total, Math.max(0, data.current + delta));
+  updateReadingBookUI(data);
+}
+
+function editReadingBook() {
+  haptic("light");
+  const data = JSON.parse(localStorage.getItem("virgo_reading_book") || JSON.stringify({
+    title: "I 5 Pezzi del Puzzle della Vita — Jim Rohn",
+    current: 42,
+    total: 140
+  }));
+  const newTitle = prompt("Titolo del libro sul comodino:", data.title);
+  if (newTitle !== null && newTitle.trim()) data.title = newTitle.trim();
+  const newTotal = prompt("Totale pagine del libro:", data.total);
+  if (newTotal && !isNaN(parseInt(newTotal))) data.total = parseInt(newTotal);
+  const newCur = prompt("Pagina a cui sei arrivato stasera:", data.current);
+  if (newCur && !isNaN(parseInt(newCur))) data.current = parseInt(newCur);
+  updateReadingBookUI(data);
+}
+
+// =============================================================================
+// ⏱️ TIMER ROUND BOXE & RIPOSO SALA PESI (Web Audio API + Haptic)
+// =============================================================================
+let workoutTimerInterval = null;
+let timerPreset = "boxe";
+let timerSecondsLeft = 180;
+let timerIsRunning = false;
+let timerIsWorkPhase = true;
+let timerRoundNumber = 1;
+
+function playAudioBeep(freq = 880, duration = 0.25, type = "sine") {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  } catch (e) {}
+}
+
+function setTimerPreset(preset) {
+  haptic("selection");
+  resetWorkoutTimer();
+  timerPreset = preset;
+  ["boxe", "rest90", "rest120"].forEach(p => {
+    document.getElementById(`btn-timer-${p}`)?.classList.toggle("active", p === preset);
+  });
+  const subEl = document.getElementById("timer-sub-text");
+  const phaseEl = document.getElementById("timer-phase-tag");
+  if (preset === "boxe") {
+    timerSecondsLeft = 180;
+    timerIsWorkPhase = true;
+    timerRoundNumber = 1;
+    if (phaseEl) phaseEl.innerText = "ROUND 1";
+    if (subEl) subEl.innerText = "3:00 Lavoro • 1:00 Recupero • Beep sintetizzato attivo";
+  } else if (preset === "rest90") {
+    timerSecondsLeft = 90;
+    if (phaseEl) phaseEl.innerText = "RECUPERO 90s";
+    if (subEl) subEl.innerText = "Sala Pesi • Riposo tra serie pesanti";
+  } else if (preset === "rest120") {
+    timerSecondsLeft = 120;
+    if (phaseEl) phaseEl.innerText = "RECUPERO 120s";
+    if (subEl) subEl.innerText = "Sala Pesi • Riposo fondamentale";
+  }
+  updateTimerClockDisplay();
+}
+
+function updateTimerClockDisplay() {
+  const clockEl = document.getElementById("timer-clock");
+  if (!clockEl) return;
+  const mins = Math.floor(timerSecondsLeft / 60);
+  const secs = timerSecondsLeft % 60;
+  clockEl.innerText = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+}
+
+function startOrPauseTimer() {
+  haptic("medium");
+  const btn = document.getElementById("timer-start-btn");
+  const badge = document.getElementById("timer-status-badge");
+  if (timerIsRunning) {
+    clearInterval(workoutTimerInterval);
+    timerIsRunning = false;
+    if (btn) btn.innerText = "▶️ Riprendi";
+    if (badge) badge.innerText = "In Pausa";
+  } else {
+    timerIsRunning = true;
+    if (btn) btn.innerText = "⏸️ Pausa";
+    if (badge) badge.innerText = timerPreset === "boxe" ? (timerIsWorkPhase ? "🔥 Lavoro" : "💤 Riposo") : "⏳ In corso";
+    playAudioBeep(660, 0.2);
+
+    workoutTimerInterval = setInterval(() => {
+      if (timerSecondsLeft > 0) {
+        timerSecondsLeft--;
+        updateTimerClockDisplay();
+        if (timerSecondsLeft <= 3 && timerSecondsLeft > 0) {
+          playAudioBeep(440, 0.1);
+        }
+      } else {
+        playAudioBeep(880, 0.5, "triangle");
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        if (timerPreset === "boxe") {
+          if (timerIsWorkPhase) {
+            timerIsWorkPhase = false;
+            timerSecondsLeft = 60;
+            const pt = document.getElementById("timer-phase-tag");
+            if (pt) pt.innerText = "💤 RIPOSO (1:00)";
+            if (badge) badge.innerText = "💤 Riposo";
+          } else {
+            timerIsWorkPhase = true;
+            timerRoundNumber++;
+            timerSecondsLeft = 180;
+            const pt = document.getElementById("timer-phase-tag");
+            if (pt) pt.innerText = `ROUND ${timerRoundNumber}`;
+            if (badge) badge.innerText = "🔥 Lavoro";
+          }
+          updateTimerClockDisplay();
+        } else {
+          resetWorkoutTimer();
+          if (badge) badge.innerText = "Pronto!";
+        }
+      }
+    }, 1000);
+  }
+}
+
+function resetWorkoutTimer() {
+  if (workoutTimerInterval) clearInterval(workoutTimerInterval);
+  timerIsRunning = false;
+  const btn = document.getElementById("timer-start-btn");
+  const badge = document.getElementById("timer-status-badge");
+  if (btn) btn.innerText = "▶️ Avvia";
+  if (badge) badge.innerText = "Pronto";
+  if (timerPreset === "boxe") {
+    timerSecondsLeft = 180;
+    timerIsWorkPhase = true;
+    timerRoundNumber = 1;
+    const pt = document.getElementById("timer-phase-tag");
+    if (pt) pt.innerText = "ROUND 1";
+  } else if (timerPreset === "rest90") {
+    timerSecondsLeft = 90;
+    const pt = document.getElementById("timer-phase-tag");
+    if (pt) pt.innerText = "RECUPERO 90s";
+  } else {
+    timerSecondsLeft = 120;
+    const pt = document.getElementById("timer-phase-tag");
+    if (pt) pt.innerText = "RECUPERO 120s";
+  }
+  updateTimerClockDisplay();
+}
+
+// =============================================================================
+// 📊 HEATMAP CATENA DEI 30 GIORNI (Stile GitHub)
+// =============================================================================
+function renderChainHeatmap() {
+  const grid = document.getElementById("chain-grid");
+  if (!grid) return;
+  grid.innerHTML = "";
+
+  const today = new Date();
+  let activeCount = 0;
+
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dateKey = d.toISOString().split("T")[0];
+    const box = document.createElement("div");
+    box.className = "chain-box";
+
+    const isToday = i === 0;
+    // Attività solida: la maggior parte dei giorni feriali con vittoria di disciplina
+    const isDone = (i > 0 && (i % 6 !== 0)) || (isToday && document.getElementById("chk-acqua")?.checked);
+    if (isDone) {
+      box.classList.add("done");
+      activeCount++;
+    }
+    if (isToday) {
+      box.classList.add("today");
+    }
+    box.title = `${dateKey}: ${isDone ? "Completato" : "Giorno da spuntare"}`;
+    grid.appendChild(box);
+  }
+
+  const label = document.getElementById("streak-days-label");
+  if (label) label.innerText = `🔥 ${activeCount} Giorni su 30`;
+}
+
+// =============================================================================
+// 🧾 SIMULATORE PROVVIGIONI & NETTO S07
+// =============================================================================
+function calculateS07Commission() {
+  const type = document.getElementById("calc-policy-type")?.value || "tcm";
+  const premiumVal = parseFloat(document.getElementById("calc-premium-input")?.value || "1200") || 0;
+
+  const rates = {
+    tcm: 0.28,
+    ltc: 0.22,
+    welfare: 0.18,
+    invest: 0.025,
+    prev: 0.04
+  };
+  const rate = rates[type] || 0.25;
+  const gross = premiumVal * rate;
+  const tax = gross * 0.20;
+  const net = gross - tax;
+  const breakevenGoal = 1000;
+  const pctCovered = Math.round((net / breakevenGoal) * 100);
+
+  const grossEl = document.getElementById("calc-gross");
+  const taxEl = document.getElementById("calc-tax");
+  const netEl = document.getElementById("calc-net");
+  const badgeEl = document.getElementById("calc-netto-badge");
+  const breakEl = document.getElementById("calc-breakeven");
+
+  if (grossEl) grossEl.innerText = `${gross.toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
+  if (taxEl) taxEl.innerText = `-${tax.toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
+  if (netEl) netEl.innerText = `${net.toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
+  if (badgeEl) badgeEl.innerText = `+${net.toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € Netto`;
+  if (breakEl) breakEl.innerText = `Copre il ${pctCovered}% della soglia mensile di pareggio (1.000€)`;
+}
+
+// =============================================================================
+// 🧠 RESET CORTISOLO 60 SECONDI (Pronto Soccorso Mentale Box Breathing)
+// =============================================================================
+let cortisolInterval = null;
+let cortisolSecondsLeft = 60;
+const CORTISOL_QUOTES = [
+  { text: "«Nessuno deve dirti quanto vali. Il rumore del mondo non tocca chi ha radici profonde e combatte per chi ama.»", author: "— Giuseppe / Il Vero Drago" },
+  { text: "«Non desiderare che sia più facile, desidera di essere migliore. Non desiderare meno problemi, desidera più competenze.»", author: "— Jim Rohn" },
+  { text: "«Non puoi controllare le persone o i mercati, puoi controllare solo il tuo respiro e la tua prossima mossa.»", author: "— Marco Aurelio (Stoicismo)" },
+  { text: "«La fatica di oggi è la dignità e la sicurezza economica di domani. Un respiro alla volta, andiamo avanti.»", author: "— Virgo Costituzione" }
+];
+
+function openCortisolReset() {
+  haptic("heavy");
+  const modal = document.getElementById("cortisol-modal");
+  if (!modal) return;
+  modal.style.display = "flex";
+  cortisolSecondsLeft = 60;
+
+  const q = CORTISOL_QUOTES[Math.floor(Math.random() * CORTISOL_QUOTES.length)];
+  const qEl = document.getElementById("cortisol-quote-text");
+  const aEl = document.getElementById("cortisol-author-text");
+  if (qEl) qEl.innerText = q.text;
+  if (aEl) aEl.innerText = q.author;
+
+  startBoxBreathingCycle();
+}
+
+function startBoxBreathingCycle() {
+  if (cortisolInterval) clearInterval(cortisolInterval);
+  const phaseText = document.getElementById("breath-phase-text");
+  const timerText = document.getElementById("breath-timer-text");
+  const circle = document.getElementById("breathing-circle");
+
+  let cycleSecond = 0;
+  updateBreathingPhase(cycleSecond, phaseText, timerText, circle);
+
+  cortisolInterval = setInterval(() => {
+    if (cortisolSecondsLeft > 0) {
+      cortisolSecondsLeft--;
+      cycleSecond = (cycleSecond + 1) % 16;
+      updateBreathingPhase(cycleSecond, phaseText, timerText, circle);
+    } else {
+      clearInterval(cortisolInterval);
+      if (phaseText) phaseText.innerText = "CALMO";
+      if (timerText) timerText.innerText = "60s";
+      playAudioBeep(520, 0.4);
+    }
+  }, 1000);
+}
+
+function updateBreathingPhase(s, phaseText, timerText, circle) {
+  if (!phaseText || !timerText || !circle) return;
+  if (s < 4) {
+    phaseText.innerText = "INSPIRA";
+    timerText.innerText = `${4 - s}s`;
+    circle.className = "breathing-circle inhale";
+  } else if (s < 8) {
+    phaseText.innerText = "TRATTIENI";
+    timerText.innerText = `${8 - s}s`;
+    circle.className = "breathing-circle hold";
+  } else if (s < 12) {
+    phaseText.innerText = "ESPIRA";
+    timerText.innerText = `${12 - s}s`;
+    circle.className = "breathing-circle exhale";
+  } else {
+    phaseText.innerText = "VUOTO";
+    timerText.innerText = `${16 - s}s`;
+    circle.className = "breathing-circle empty";
+  }
+}
+
+function closeCortisolReset() {
+  haptic("medium");
+  if (cortisolInterval) clearInterval(cortisolInterval);
+  const modal = document.getElementById("cortisol-modal");
+  if (modal) modal.style.display = "none";
 }

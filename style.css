@@ -1502,4 +1502,282 @@ textarea:focus {
   color: var(--green-accent);
 }
 
+/* =============================================================================
+   🧠 RESET CORTISOLO 60S & PULSANTE HEADER
+   ============================================================================= */
+.cortisol-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cortisol-pill-btn:hover {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+}
+
+.cortisol-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 10, 19, 0.96);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.cortisol-container {
+  background: #0f172a;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 20px;
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(245, 158, 11, 0.15);
+}
+
+.cortisol-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.cortisol-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.cortisol-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.cortisol-sub {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.breathing-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0 20px;
+  min-height: 140px;
+}
+
+.breathing-circle {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 3px solid #fbbf24;
+  background: rgba(245, 158, 11, 0.1);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+  transition: transform 1s ease-in-out, background 1s ease-in-out;
+}
+
+.breathing-circle.inhale {
+  transform: scale(1.18);
+  background: rgba(16, 185, 129, 0.25);
+  border-color: #34d399;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+}
+
+.breathing-circle.hold {
+  transform: scale(1.18);
+  background: rgba(59, 130, 246, 0.25);
+  border-color: #60a5fa;
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+}
+
+.breathing-circle.exhale {
+  transform: scale(0.92);
+  background: rgba(217, 119, 6, 0.2);
+  border-color: #f59e0b;
+}
+
+.breathing-circle.empty {
+  transform: scale(0.92);
+  background: rgba(100, 116, 139, 0.15);
+  border-color: #94a3b8;
+}
+
+.breath-phase {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #f8fafc;
+}
+
+.breath-timer {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #fbbf24;
+}
+
+.cortisol-quote-card {
+  background: rgba(0, 0, 0, 0.4);
+  border-left: 3px solid #fbbf24;
+  padding: 10px 14px;
+  border-radius: 8px;
+  text-align: left;
+  margin-bottom: 12px;
+}
+
+.cortisol-quote-card p {
+  font-size: 0.82rem;
+  font-style: italic;
+  color: #e2e8f0;
+  margin: 0 0 4px;
+  line-height: 1.35;
+}
+
+.cortisol-author {
+  font-size: 0.72rem;
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.cortisol-action-box {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.78rem;
+  color: #e2e8f0;
+}
+
+.cortisol-action-box strong {
+  display: block;
+  color: #34d399;
+  margin-bottom: 2px;
+}
+
+/* =============================================================================
+   📊 HEATMAP CATENA DEI 30 GIORNI
+   ============================================================================= */
+.chain-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.chain-box {
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.chain-box.done {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #34d399;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.3);
+}
+
+.chain-box.today {
+  border: 2px dashed #fbbf24;
+}
+
+/* =============================================================================
+   ⏱️ TIMER ROUND BOXE & RIPOSO SALA PESI
+   ============================================================================= */
+.workout-timer-card {
+  background: linear-gradient(145deg, #131b2e, #0c1220);
+  border: 1px solid rgba(217, 119, 6, 0.35);
+}
+
+.timer-display-box {
+  text-align: center;
+  padding: 14px 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  margin: 10px 0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.timer-phase-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  margin-bottom: 6px;
+}
+
+.timer-big-clock {
+  font-size: 2.8rem;
+  font-weight: 900;
+  font-family: monospace, sans-serif;
+  letter-spacing: 0.05em;
+  color: #f8fafc;
+  line-height: 1.1;
+  text-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+}
+
+.timer-sub-text {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* =============================================================================
+   🧾 CALCOLATORE PROVVIGIONI & NETTO S07
+   ============================================================================= */
+.calc-card {
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.calc-results-box {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-subtle);
+}
+
+.calc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.calc-row strong.gold {
+  color: #fbbf24;
+}
+
 

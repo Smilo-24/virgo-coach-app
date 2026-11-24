@@ -49,6 +49,10 @@
         </div>
       </div>
       <div class="header-right">
+        <button class="cortisol-pill-btn" onclick="openCortisolReset()" title="Reset Cortisolo 60 Secondi">
+          <span>🧠</span>
+          <span>60s SOS</span>
+        </button>
         <div class="streak-pill" id="streak-badge" title="Giorni attivi">
           <span>🔥</span>
           <span id="streak-count">1</span>
@@ -175,6 +179,19 @@
           </div>
         </div>
 
+        <!-- 📊 HEATMAP CATENA DEI 30 GIORNI (Idea 6) -->
+        <div class="card heatmap-card">
+          <div class="card-header-flex">
+            <div class="card-header-left">
+              <span class="card-icon">📊</span>
+              <h3>Catena della Disciplina (30 Giorni)</h3>
+            </div>
+            <span class="mini-counter" id="streak-days-label">🔥 Striscia Attiva</span>
+          </div>
+          <p class="card-sub" style="margin-bottom: 8px;">Non spezzare mai la catena. Ogni casella verde/oro è una vittoria reale.</p>
+          <div class="chain-grid" id="chain-grid"></div>
+        </div>
+
         <!-- Timeline della Giornata -->
         <div class="card timeline-card">
           <div class="card-header">
@@ -225,6 +242,31 @@
           <button class="day-chip" onclick="selectDayWorkout(4)">Ven</button>
           <button class="day-chip" onclick="selectDayWorkout(5)">Sab</button>
           <button class="day-chip" onclick="selectDayWorkout(6)">Dom</button>
+        </div>
+
+        <!-- ⏱️ TIMER ROUND BOXE & RIPOSO SALA PESI (Idea 4) -->
+        <div class="card workout-timer-card">
+          <div class="card-header-flex">
+            <div class="card-header-left">
+              <span class="card-icon">⏱️</span>
+              <h3>Timer Round Boxe & Riposo Pesi</h3>
+            </div>
+            <span class="mini-counter" id="timer-status-badge">Pronto</span>
+          </div>
+          <div class="sub-tabs" style="margin-top: 6px; margin-bottom: 8px;">
+            <button class="sub-tab-btn active" id="btn-timer-boxe" onclick="setTimerPreset('boxe')">🥊 Round Boxe (3:00/1:00)</button>
+            <button class="sub-tab-btn" id="btn-timer-rest90" onclick="setTimerPreset('rest90')">🏋️ 90s Pesi</button>
+            <button class="sub-tab-btn" id="btn-timer-rest120" onclick="setTimerPreset('rest120')">🏋️ 120s Pesi</button>
+          </div>
+          <div class="timer-display-box">
+            <div class="timer-phase-tag" id="timer-phase-tag">ROUND 1</div>
+            <div class="timer-big-clock" id="timer-clock">03:00</div>
+            <div class="timer-sub-text" id="timer-sub-text">3:00 Lavoro • 1:00 Recupero • Beep sintetizzato attivo</div>
+          </div>
+          <div class="hero-actions" style="margin-top: 8px;">
+            <button class="pill-btn primary" id="timer-start-btn" onclick="startOrPauseTimer()">▶️ Avvia</button>
+            <button class="pill-btn secondary" onclick="resetWorkoutTimer()">🔄 Reset</button>
+          </div>
         </div>
 
         <!-- Scheda Dettaglio Workout Dinamica -->
@@ -524,11 +566,12 @@
           <p>La scalata professionale reale e le ancore di forza mentale.</p>
         </div>
 
-        <!-- Selettore Sotto-Schede: Carriera vs Guerrieri vs Libri vs Fede -->
+        <!-- Selettore Sotto-Schede: Carriera vs Guerrieri vs Libri vs Cinema vs Fede -->
         <div class="sub-tabs">
           <button class="sub-tab-btn active" id="btn-sub-career" onclick="switchMentorView('career')">💼 S07</button>
           <button class="sub-tab-btn" id="btn-sub-warriors" onclick="switchMentorView('warriors')">⚔️ Guerrieri</button>
           <button class="sub-tab-btn" id="btn-sub-books" onclick="switchMentorView('books')">📖 Libri</button>
+          <button class="sub-tab-btn" id="btn-sub-cinema" onclick="switchMentorView('cinema')">🎬 Cinema</button>
           <button class="sub-tab-btn" id="btn-sub-faith" onclick="switchMentorView('faith')">✝️ Fede</button>
         </div>
 
@@ -573,6 +616,37 @@
               <button class="runway-chip" id="rw-2" onclick="setRunwayStage(2)">2. Accredito S07 (+500€)</button>
               <button class="runway-chip" id="rw-3" onclick="setRunwayStage(3)">3. Scudo (1.500€)</button>
               <button class="runway-chip" id="rw-4" onclick="setRunwayStage(4)">4. Respiro (5.000€)</button>
+            </div>
+          </div>
+
+          <!-- 🧾 CALCOLATORE RAPIDO PROVVIGIONI & NETTO S07 (Idea 7) -->
+          <div class="card calc-card">
+            <div class="card-header-flex">
+              <div class="card-header-left">
+                <span class="card-icon">🧾</span>
+                <h3>Simulatore Provvigioni & Netto S07</h3>
+              </div>
+              <span class="mini-counter" id="calc-netto-badge">+268,80 € Netto</span>
+            </div>
+            <div class="s07-counter-row" style="margin-bottom:8px;">
+              <span>Ramo Polizza:</span>
+              <select id="calc-policy-type" class="q360-select" style="width: auto; padding: 4px 8px; font-size: 0.82rem;" onchange="calculateS07Commission()">
+                <option value="tcm">🛡️ TCM / Caso Morte (28%)</option>
+                <option value="ltc">🏥 LTC / Salute (22%)</option>
+                <option value="welfare">🏢 Welfare Aziendale (18%)</option>
+                <option value="invest">📈 Investimento / Gestione (2.5%)</option>
+                <option value="prev">👴 Previdenza / PIP (4.0%)</option>
+              </select>
+            </div>
+            <div class="custom-grocery-add" style="margin-top: 6px; margin-bottom: 8px;">
+              <input type="number" id="calc-premium-input" placeholder="Premio Annuo (€)..." value="1200" oninput="calculateS07Commission()">
+              <button class="pill-btn primary" onclick="calculateS07Commission()">⚡ Calcola</button>
+            </div>
+            <div class="calc-results-box" id="calc-results">
+              <div class="calc-row"><span>Provvigione Lorda Stimata:</span> <strong id="calc-gross" class="gold">336,00 €</strong></div>
+              <div class="calc-row"><span>Ritenuta d'Acconto (20%):</span> <strong id="calc-tax">-67,20 €</strong></div>
+              <div class="calc-row"><span>Netto Stimato in Tasca:</span> <strong id="calc-net" style="color:#10b981;">268,80 €</strong></div>
+              <div class="calc-row" style="font-size:0.75rem; color:#9ca3af; margin-top:4px;"><span>Avanzamento Pareggio Mese:</span> <strong id="calc-breakeven">Copre il 27% della soglia</strong></div>
             </div>
           </div>
 
@@ -650,6 +724,34 @@
 
         <!-- 📖 IDEA LIVE 3: VISTA FRASI DI LIBRI & LETTURE -->
         <div id="view-books" class="mentor-view" style="display: none;">
+          <!-- 📖 TRACKER LIBRO IN LETTURA (Idea 3) -->
+          <div class="card book-tracker-card" style="margin-bottom: 12px;">
+            <div class="card-header-flex">
+              <div class="card-header-left">
+                <span class="card-icon">📖</span>
+                <h3 id="reading-book-title">I 5 Pezzi del Puzzle della Vita</h3>
+              </div>
+              <span class="mini-counter" id="reading-progress-pct">30%</span>
+            </div>
+            <p class="card-sub" style="margin-bottom:8px;">Libro sul comodino • Stacca gli schermi alle 22:15 per leggere.</p>
+            <div class="daily-progress-box" style="margin-bottom:10px;">
+              <div class="progress-top">
+                <span class="progress-label" id="reading-pages-text">Pagina 42 di 140</span>
+                <span class="progress-pct" id="reading-remaining-text">98 pag. mancanti</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="reading-progress-fill" style="width: 30%; background: linear-gradient(90deg, #10b981, #d97706);"></div>
+              </div>
+            </div>
+            <div class="hero-actions" style="gap:6px; flex-wrap: wrap;">
+              <button class="pill-btn secondary" onclick="adjustReadingPage(-1)">−1</button>
+              <button class="pill-btn primary" onclick="adjustReadingPage(1)">+1 Pag</button>
+              <button class="pill-btn secondary" onclick="adjustReadingPage(5)">+5</button>
+              <button class="pill-btn secondary" onclick="adjustReadingPage(10)">+10</button>
+              <button class="pill-btn secondary" onclick="editReadingBook()">✏️ Modifica</button>
+            </div>
+          </div>
+
           <div class="warrior-swipe-card" id="book-card" style="border-color: rgba(16, 185, 129, 0.35);">
             <div class="warrior-author" id="b-title" style="color: #10b981;">📖 JIM ROHN — Le 4 Grandi Domande</div>
             <div class="warrior-quote" id="b-quote">«Non desiderare che sia più facile, desidera di essere migliore. Se il perché è forte, il come diventa facile.»</div>
@@ -659,6 +761,53 @@
             </div>
           </div>
           <button class="pill-btn secondary full" onclick="openVaultFeederCategory('libro')">📖 + Salva Nuova Frase dal Libro che stai leggendo</button>
+        </div>
+
+        <!-- 🎬 VISTA CINEMA & SERIE TV (08_cultura/CINEMA_SERIE_TV.md) -->
+        <div id="view-cinema" class="mentor-view" style="display: none;">
+          <div class="warrior-swipe-card" id="cinema-card" style="border-color: rgba(217, 119, 6, 0.4);">
+            <div class="warrior-author" id="c-title" style="color: #f59e0b;">🍔 THE FOUNDER — Ray Kroc</div>
+            <div class="badge-type" id="c-badge" style="display:inline-block; margin-bottom:8px;">🧠 05_mente & 💼 04_carriera</div>
+            <div class="warrior-quote" id="c-quote">«Niente al mondo può sostituire la perseveranza. Solo la determinazione e la perseveranza sono onnipotenti.»</div>
+            <div class="warrior-focus" id="c-focus">🎬 <strong>Lezione Archetipica:</strong> A 52 anni, rifiutato dalle banche, non si è arreso. Chi ha costanza vince sempre sul talento svogliato.</div>
+            <div class="card-footer-action">
+              <button class="pill-btn primary full" onclick="nextCinemaQuote()">🎬 Prossimo Film / Serie</button>
+            </div>
+          </div>
+
+          <!-- Modulo rapido di registrazione Film/Serie vista da Simone -->
+          <div class="card" style="margin-top: 12px;">
+            <div class="card-header-flex">
+              <div class="card-header-left">
+                <span class="card-icon">🎬</span>
+                <h3>Registra Film o Serie TV Vista</h3>
+              </div>
+              <span class="mini-counter">Sync Vault</span>
+            </div>
+            <p class="card-sub" style="margin-bottom:8px;">Aggiungi un'opera che hai visto con la tua riflessione: finisce dritta in <strong>08_cultura/CINEMA_SERIE_TV.md</strong>.</p>
+            <div class="form-group" style="margin-bottom:8px;">
+              <input type="text" id="cinema-input-title" class="q360-select" placeholder="Titolo (es. Cinderella Man, Peaky Blinders...)" style="font-weight:500;">
+            </div>
+            <div class="s07-counter-row" style="margin-bottom:8px;">
+              <select id="cinema-input-type" class="q360-select" style="width:48%;">
+                <option value="Film">🎬 Film</option>
+                <option value="Serie">📺 Serie TV</option>
+              </select>
+              <select id="cinema-input-area" class="q360-select" style="width:48%;">
+                <option value="🧠 05_mente">🧠 Mente / Resilienza</option>
+                <option value="⚔️ 07_guerrieri">⚔️ Guerrieri / Boxe</option>
+                <option value="💼 04_carriera">💼 Carriera / Business</option>
+                <option value="❤️ 03_relazioni">❤️ Relazioni / Famiglia</option>
+                <option value="✝️ 06_fede">✝️ Fede / Speranza</option>
+                <option value="🏛️ 08_cultura">🏛️ Cultura / Strategia</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:8px;">
+              <textarea id="cinema-input-note" class="q360-input" rows="2" placeholder="Cosa ti ha insegnato questa opera? Frase o scena chiave..."></textarea>
+            </div>
+            <button class="pill-btn primary full" onclick="submitNewCinemaEntry()">💾 Salva nel Vault</button>
+            <div id="cinema-save-feedback" class="feedback-msg" style="display:none; margin-top:8px;"></div>
+          </div>
         </div>
 
         <!-- VISTA FEDE -->
@@ -791,10 +940,11 @@
             </div>
             <p class="card-sub">Scegli la categoria, scrivi o detta col microfono e premi Salva: finisce dritto nel file Markdown corrispondente del Vault.</p>
 
-            <!-- Griglia Categorie Rapide (8 Categorie) -->
+            <!-- Griglia Categorie Rapide (9 Categorie) -->
             <div class="vault-cat-grid" id="vault-cat-grid">
               <button type="button" class="vault-cat-chip active" data-cat="libro" onclick="selectVaultCategory('libro')">📖 Frasi Libri</button>
-              <button type="button" class="vault-cat-chip" data-cat="youtube" onclick="selectVaultCategory('youtube')">🎬 Link Video/Pod</button>
+              <button type="button" class="vault-cat-chip" data-cat="cinema" onclick="selectVaultCategory('cinema')">🎬 Film & Serie</button>
+              <button type="button" class="vault-cat-chip" data-cat="youtube" onclick="selectVaultCategory('youtube')">🍿 Link Video/Pod</button>
               <button type="button" class="vault-cat-chip" data-cat="ricetta" onclick="selectVaultCategory('ricetta')">👨‍🍳 Ricette & Cibo</button>
               <button type="button" class="vault-cat-chip" data-cat="pensiero" onclick="selectVaultCategory('pensiero')">🧠 Pensieri</button>
               <button type="button" class="vault-cat-chip" data-cat="guerriero" onclick="selectVaultCategory('guerriero')">⚔️ Cit. Guerrieri</button>
@@ -920,6 +1070,39 @@
         <span class="nav-label">Vault</span>
       </button>
     </nav>
+  </div>
+
+  <!-- ===================================================================
+       OVERLAY MODAL: RESET CORTISOLO 60 SECONDI (Pronto Soccorso Mentale)
+       =================================================================== -->
+  <div id="cortisol-modal" class="cortisol-overlay" style="display: none;">
+    <div class="cortisol-container">
+      <div class="cortisol-header">
+        <span class="cortisol-badge">🧠 PRONTO SOCCORSO MENTALE</span>
+        <button class="cortisol-close" onclick="closeCortisolReset()">✕</button>
+      </div>
+      <h2 id="cortisol-title" style="margin-top:4px;">Reset Cortisolo (60s)</h2>
+      <p class="cortisol-sub">Segui il ritmo del cerchio: Box Breathing 4-4-4-4</p>
+      
+      <div class="breathing-box">
+        <div class="breathing-circle" id="breathing-circle">
+          <span class="breath-phase" id="breath-phase-text">INSPIRA</span>
+          <span class="breath-timer" id="breath-timer-text">4s</span>
+        </div>
+      </div>
+
+      <div class="cortisol-quote-card">
+        <p id="cortisol-quote-text">«Nessuno deve dirti quanto vali. Il rumore del mondo non tocca chi ha radici profonde e combatte per chi ama.»</p>
+        <span class="cortisol-author" id="cortisol-author-text">— Giuseppe / Virgo</span>
+      </div>
+
+      <div class="cortisol-action-box">
+        <strong>⚡ PROSSIMA AZIONE FISICA (15 MINUTI):</strong>
+        <span id="cortisol-action-text">Bevi 300ml d'acqua fresca, raddrizza le spalle, fai 10 passi lenti e affronta l'unico compito che stai rimandando.</span>
+      </div>
+
+      <button class="pill-btn primary full" style="margin-top:14px;" onclick="closeCortisolReset()">✅ Respiro Ritrovato (Torna all'Azione)</button>
+    </div>
   </div>
 
   <script src="app.js"></script>
