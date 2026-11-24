@@ -485,23 +485,69 @@ function resetGroceryList() {
 }
 
 // =============================================================================
-// CARRIERA, GUERRIERI & FEDE CONTROLLI
+// CARRIERA, GUERRIERI, LIBRI & FEDE CONTROLLI
 // =============================================================================
+const DEFAULT_BOOK_QUOTES = [
+  {
+    title: "📖 JIM ROHN — Le 4 Grandi Domande",
+    quote: "«Non desiderare che sia più facile, desidera di essere migliore. Non desiderare meno problemi, desidera più competenze.»",
+    focus: "Il tuo reddito e la tua libertà crescono esattamente nella misura in cui cresci tu."
+  },
+  {
+    title: "📖 JIM ROHN — Le Stagioni della Vita",
+    quote: "«Non puoi cambiare le stagioni, ma puoi cambiare te stesso. L'inverno non dura per sempre per chi usa il freddo per diventare più forte, più saggio e più capace.»",
+    focus: "Quando sei nell'inverno finanziario (100 € sul conto), non maledire il terreno: prepara i semi e affila gli attrezzi per la primavera."
+  },
+  {
+    title: "📖 MARK DOUGLAS — Trading in the Zone",
+    quote: "«I migliori eseguono senza esitazione perché non chiedono a un singolo evento di definire il proprio valore personale.»",
+    focus: "Stacca l'ego dal singolo esito. Ragiona per serie di 20 appuntamenti o 20 esecuzioni."
+  },
+  {
+    title: "📖 TOM HOUGAARD — Best Loser Wins",
+    quote: "«Tutti sono bravi quando vincono. È la tua postura mentale quando sei sotto pressione che decide a quale categoria di uomini appartieni.»",
+    focus: "Sangue freddo, spalle basse e rispetto chirurgico delle regole."
+  },
+  {
+    title: "📖 MARCO AURELIO — Colloqui con Sé Stesso",
+    quote: "«L'ostacolo sulla via diventa esso stesso la via. Ciò che si oppone all'azione, fa avanzare l'azione.»",
+    focus: "Usa la durezza di questo momento come carburante per costruire la tua competenza in S07."
+  }
+];
+
+let currentBookIdx = 0;
+
+function getBookQuotesList() {
+  const custom = JSON.parse(localStorage.getItem("virgo_custom_books") || "[]");
+  return [...custom, ...DEFAULT_BOOK_QUOTES];
+}
+
 function switchMentorView(view) {
   haptic("light");
-  document.getElementById("btn-sub-career").classList.toggle("active", view === "career");
-  document.getElementById("btn-sub-warriors").classList.toggle("active", view === "warriors");
-  document.getElementById("btn-sub-faith").classList.toggle("active", view === "faith");
+  ["career", "warriors", "books", "faith"].forEach(v => {
+    const btn = document.getElementById(`btn-sub-${v}`);
+    const box = document.getElementById(`view-${v}`);
+    if (btn) btn.classList.toggle("active", v === view);
+    if (box) box.style.display = v === view ? "block" : "none";
+  });
+}
 
-  document.getElementById("view-career").style.display = view === "career" ? "block" : "none";
-  document.getElementById("view-warriors").style.display = view === "warriors" ? "block" : "none";
-  document.getElementById("view-faith").style.display = view === "faith" ? "block" : "none";
+function nextBookQuote() {
+  haptic("medium");
+  const list = getBookQuotesList();
+  currentBookIdx = (currentBookIdx + 1) % list.length;
+  const b = list[currentBookIdx];
+  document.getElementById("b-title").innerText = b.title;
+  document.getElementById("b-quote").innerText = b.quote;
+  document.getElementById("b-focus").innerHTML = `📚 <strong>Lezione atomizzata:</strong> ${b.focus}`;
 }
 
 function nextWarrior() {
   haptic("medium");
-  currentWarriorIdx = (currentWarriorIdx + 1) % WARRIORS.length;
-  const w = WARRIORS[currentWarriorIdx];
+  const customW = JSON.parse(localStorage.getItem("virgo_custom_warriors") || "[]");
+  const allW = [...customW, ...WARRIORS];
+  currentWarriorIdx = (currentWarriorIdx + 1) % allW.length;
+  const w = allW[currentWarriorIdx];
   document.getElementById("w-author").innerText = w.author;
   document.getElementById("w-quote").innerText = w.quote;
   document.getElementById("w-focus").innerHTML = `💡 <strong>Focus:</strong> ${w.focus}`;
@@ -509,8 +555,10 @@ function nextWarrior() {
 
 function nextFaith() {
   haptic("medium");
-  currentFaithIdx = (currentFaithIdx + 1) % FAITH_VERSES.length;
-  const f = FAITH_VERSES[currentFaithIdx];
+  const customF = JSON.parse(localStorage.getItem("virgo_custom_faith") || "[]");
+  const allF = [...customF, ...FAITH_VERSES];
+  currentFaithIdx = (currentFaithIdx + 1) % allF.length;
+  const f = allF[currentFaithIdx];
   document.getElementById("f-ref").innerText = f.ref;
   document.getElementById("f-quote").innerText = f.quote;
   document.getElementById("f-focus").innerText = `🕊️ ${f.focus}`;
@@ -769,19 +817,404 @@ const Q360_QUESTIONS = [
   { id: "Q100", cat: 10, title: "Messaggio del Simone di oggi (a 100 €) al Simone del 2031", prompt: "Cosa vuoi lasciare scritto oggi dal fondo della trincea al te stesso che avrà costruito tutto?" }
 ];
 
-let q360FilterMode = "all"; // all | todo | done
+let q360FilterMode = "todo"; // Default: mostra solo quelle DA FARE (così quando salvi spariscono!)
 let q360Answers = {};
 let q360DebounceTimer = null;
+let currentVaultCat = "libro";
+
+const VAULT_CATEGORIES_META = {
+  libro: {
+    file: "08_cultura/LIBRERIA.md (Sezione Frasi & Concetti dai Libri)",
+    titlePh: "Titolo del Libro / Autore (es. Jim Rohn - I 5 Pezzi del Puzzle)...",
+    contentPh: "Scrivi o detta la frase del libro o l'insegnamento che vuoi salvare e atomizzare nel Vault..."
+  },
+  youtube: {
+    file: "08_cultura/LIBRERIA.md + Inbox Link YouTube/Podcast",
+    titlePh: "Titolo / Autore del Video o Podcast (es. Seminario Jim Rohn)...",
+    contentPh: "Incolla qui il link YouTube/Podcast e aggiungi eventuali note o minuti chiave..."
+  },
+  ricetta: {
+    file: "02_corpo/RICETTE.md (+ Scheda Ricette nell'App)",
+    titlePh: "Nome del Piatto / Ricetta (es. Pollo Cremoso al Curry Light)...",
+    contentPh: "Ingredienti e preparazione rapida..."
+  },
+  pensiero: {
+    file: "05_mente/PENSIERI.md (In cima col timestamp di oggi)",
+    titlePh: "Titolo breve del pensiero (opzionale)...",
+    contentPh: "Scrivi o detta a ruota libera il tuo pensiero, riflessione o sfogo..."
+  },
+  guerriero: {
+    file: "07_guerrieri/CITAZIONI.md (+ Mazzo Guerrieri nell'App)",
+    titlePh: "Nome del Mentore / Guerriero (es. Giuseppe, Kobe, Rohn)...",
+    contentPh: "La citazione esatta e la lezione operativa per te..."
+  },
+  fede: {
+    file: "06_fede/VERSETTI.md (+ Mazzo Fede nell'App)",
+    titlePh: "Versetto / Riferimento (es. Matteo 11:28 o Preghiera)...",
+    contentPh: "Testo del versetto, preghiera o riflessione spirituale..."
+  },
+  angela: {
+    file: "03_relazioni/ANGELA.md (Note, Idee Regalo, Date, Obiettivi)",
+    titlePh: "Argomento (es. Idea serata, Regalo, Data importante, Casa)...",
+    contentPh: "Dettagli da custodire nel file dedicato ad Angela..."
+  },
+  palestra: {
+    file: "02_corpo/PERSONAL_TRAINER.md (Scheda, Carichi, Sensazioni)",
+    titlePh: "Gruppo Muscolare / Allenamento (es. Push Petto-Spalle-Tricipiti)...",
+    contentPh: "Esercizi, serie, ripetizioni, carichi o note fisiche..."
+  }
+};
+
+function switchVaultMode(mode) {
+  haptic("light");
+  const isPerm = mode === "perm";
+  document.getElementById("btn-vault-perm")?.classList.toggle("active", isPerm);
+  document.getElementById("btn-vault-q100")?.classList.toggle("active", !isPerm);
+  const vPerm = document.getElementById("view-vault-perm");
+  const vQ100 = document.getElementById("view-vault-q100");
+  if (vPerm) vPerm.style.display = isPerm ? "block" : "none";
+  if (vQ100) vQ100.style.display = isPerm ? "none" : "block";
+}
+
+function selectVaultCategory(cat) {
+  haptic("selection");
+  currentVaultCat = cat;
+  document.querySelectorAll(".vault-cat-chip").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("data-cat") === cat);
+  });
+  const meta = VAULT_CATEGORIES_META[cat] || VAULT_CATEGORIES_META.libro;
+  const targetEl = document.getElementById("vault-target-file");
+  const titleEl = document.getElementById("vault-entry-title");
+  const contentEl = document.getElementById("vault-entry-content");
+  if (targetEl) targetEl.innerHTML = `📂 Destinazione Vault: <strong>${meta.file}</strong>`;
+  if (titleEl) titleEl.placeholder = meta.titlePh;
+  if (contentEl) contentEl.placeholder = meta.contentPh;
+}
+
+function openVaultFeederCategory(cat) {
+  switchTab("q360");
+  switchVaultMode("perm");
+  selectVaultCategory(cat);
+}
+
+async function submitPermanentVaultEntry() {
+  haptic("success");
+  const titleEl = document.getElementById("vault-entry-title");
+  const contentEl = document.getElementById("vault-entry-content");
+  const title = (titleEl?.value || "").trim();
+  const content = (contentEl?.value || "").trim();
+
+  if (!content) {
+    showPermVaultFeedback("✍️ Scrivi almeno il contenuto prima di salvare!");
+    return;
+  }
+
+  // 1. Inietta subito anche nelle schede live dell'App (Libri, Ricette, Guerrieri, Fede)
+  injectIntoLiveAppCards(currentVaultCat, title, content);
+
+  // 2. Salva nello storico permanente locale del dispositivo
+  const history = JSON.parse(localStorage.getItem("virgo_vault_perm_history") || "[]");
+  const entryObj = {
+    date: new Date().toISOString(),
+    cat: currentVaultCat,
+    title: title || currentVaultCat.toUpperCase(),
+    content: content
+  };
+  history.push(entryObj);
+  localStorage.setItem("virgo_vault_perm_history", JSON.stringify(history));
+  renderPermVaultHistory();
+
+  if (titleEl) titleEl.value = "";
+  if (contentEl) contentEl.value = "";
+
+  // 3. Prova salvataggio diretto su PC (http://127.0.0.1:8765/api/vault_feed)
+  const localSaved = await fetch("http://127.0.0.1:8765/api/vault_feed", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(entryObj)
+  })
+    .then(r => r.ok ? r.json() : null)
+    .catch(() => null);
+
+  if (localSaved && localSaved.ok) {
+    showPermVaultFeedback(`✅ Salvato permanentemente in <strong>${localSaved.file}</strong>!`);
+    return;
+  }
+
+  // 4. Se da Telefono via Telegram Mini App, invia al bot con tg.sendData
+  const payloadStr = "VAULT_FEED:" + JSON.stringify(entryObj);
+  if (tg?.sendData && payloadStr.length <= 4000) {
+    try {
+      tg.sendData(payloadStr);
+      showPermVaultFeedback(`✅ Inviato a @VirgoCoach_bot e salvato nel Vault!`);
+      return;
+    } catch (e) {
+      console.warn("tg.sendData fallback:", e);
+    }
+  }
+
+  // 5. Fallback appunti
+  try {
+    await navigator.clipboard.writeText(`VAULT_${currentVaultCat.toUpperCase()}: ${title ? title + " — " : ""}${content}`);
+  } catch (e) {}
+  showPermVaultFeedback(`✅ Salvato nell'App! (Copiato anche negli appunti per @VirgoCoach_bot)`);
+}
+
+function injectIntoLiveAppCards(cat, title, content) {
+  if (cat === "libro") {
+    const books = JSON.parse(localStorage.getItem("virgo_custom_books") || "[]");
+    books.unshift({
+      title: `📖 ${title || "Libro in Lettura"}`,
+      quote: `«${content}»`,
+      focus: "Aggiunto dalla tua lettura personale nel Vault."
+    });
+    localStorage.setItem("virgo_custom_books", JSON.stringify(books));
+  } else if (cat === "ricetta") {
+    const recipes = JSON.parse(localStorage.getItem("virgo_custom_recipes") || "[]");
+    recipes.unshift({ title: title || "Nuova Ricetta", content });
+    localStorage.setItem("virgo_custom_recipes", JSON.stringify(recipes));
+    renderCustomRecipes();
+  } else if (cat === "guerriero") {
+    const warriors = JSON.parse(localStorage.getItem("virgo_custom_warriors") || "[]");
+    warriors.unshift({
+      author: `⚔️ ${title || "Mentore del Vault"}`,
+      quote: `«${content}»`,
+      focus: "Massima aggiunta personalmente da Simone."
+    });
+    localStorage.setItem("virgo_custom_warriors", JSON.stringify(warriors));
+  } else if (cat === "fede") {
+    const faith = JSON.parse(localStorage.getItem("virgo_custom_faith") || "[]");
+    faith.unshift({
+      ref: `✝️ ${title || "Parola & Preghiera"}`,
+      quote: `«${content}»`,
+      focus: "Ancoraggio spirituale aggiunto da Simone."
+    });
+    localStorage.setItem("virgo_custom_faith", JSON.stringify(faith));
+  }
+}
+
+function showPermVaultFeedback(htmlMsg) {
+  const fb = document.getElementById("vault-perm-feedback");
+  if (!fb) return;
+  fb.className = "feedback-msg success";
+  fb.style.display = "block";
+  fb.innerHTML = htmlMsg;
+  setTimeout(() => {
+    fb.style.display = "none";
+  }, 5000);
+}
+
+function renderPermVaultHistory() {
+  const container = document.getElementById("vault-perm-history");
+  const counterEl = document.getElementById("vault-perm-count");
+  const history = JSON.parse(localStorage.getItem("virgo_vault_perm_history") || "[]");
+  if (counterEl) counterEl.innerText = `${history.length} salvati`;
+  if (!container) return;
+  if (history.length === 0) {
+    container.innerHTML = `<p class="card-sub" style="margin-bottom:0;">Nessun elemento ancora inviato da questa scheda.</p>`;
+    return;
+  }
+  container.innerHTML = "";
+  history.slice(-6).reverse().forEach(item => {
+    const row = document.createElement("div");
+    row.className = "history-item";
+    const d = new Date(item.date).toLocaleDateString("it-IT", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+    row.innerHTML = `<div class="history-date">🏛️ [${item.cat.toUpperCase()}] ${item.title} • ${d}</div><div class="history-text">${item.content}</div>`;
+    container.appendChild(row);
+  });
+}
+
+function renderCustomRecipes() {
+  const container = document.getElementById("custom-recipes-container");
+  if (!container) return;
+  const recipes = JSON.parse(localStorage.getItem("virgo_custom_recipes") || "[]");
+  container.innerHTML = "";
+  recipes.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "meal-card highlight-recipe";
+    div.innerHTML = `
+      <div class="meal-tag">👨‍🍳 RICETTA AGGIUNTA DA SIMONE NEL VAULT</div>
+      <h4>🍽️ ${r.title}</h4>
+      <p>${r.content}</p>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// =============================================================================
+// 🏋️ GYM TRACKER, 🛒 SPESA EXTRA, 📞 S07 CRM & 🛡️ RUNWAY SCUDO
+// =============================================================================
+function initExtraModules() {
+  // 1. Gym metrics
+  const gym = JSON.parse(localStorage.getItem("virgo_gym_metrics") || '{"weight":"74.0","bench":"","pull":"","legs":""}');
+  ["weight", "bench", "pull", "legs"].forEach(k => {
+    const el = document.getElementById(`gym-${k}`);
+    if (el && gym[k]) el.value = gym[k];
+  });
+  updateWeightBadge(gym.weight || "74.0");
+
+  // 2. Custom grocery
+  renderCustomGrocery();
+
+  // 3. S07 CRM & Appointments
+  const appts = parseInt(localStorage.getItem("virgo_s07_appts") || "0", 10);
+  updateS07ApptsUI(appts);
+  renderS07Leads();
+
+  // 4. Runway stage
+  const rwStage = parseInt(localStorage.getItem("virgo_runway_stage") || "1", 10);
+  setRunwayStage(rwStage, true);
+
+  // 5. Custom recipes & permanent vault history
+  renderCustomRecipes();
+  renderPermVaultHistory();
+}
+
+function updateWeightBadge(w) {
+  const badge = document.getElementById("weight-badge-counter");
+  if (badge) badge.innerText = `${w || "74.0"} kg ➔ 72.0 kg`;
+}
+
+function saveGymMetric(key, val) {
+  const gym = JSON.parse(localStorage.getItem("virgo_gym_metrics") || "{}");
+  gym[key] = val;
+  localStorage.setItem("virgo_gym_metrics", JSON.stringify(gym));
+  if (key === "weight") updateWeightBadge(val);
+}
+
+function syncGymMetricsToVault() {
+  const gym = JSON.parse(localStorage.getItem("virgo_gym_metrics") || "{}");
+  const summary = `Peso: ${gym.weight || "74.0"} kg | Panca/Spinte: ${gym.bench || "N/D"} | Trazioni/Lat: ${gym.pull || "N/D"} | Squat/Pressa: ${gym.legs || "N/D"}`;
+  const entryObj = {
+    date: new Date().toISOString(),
+    cat: "palestra",
+    title: "Aggiornamento Peso & Carichi Sala Pesi",
+    content: summary
+  };
+  fetch("http://127.0.0.1:8765/api/vault_feed", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(entryObj)
+  }).catch(() => {});
+  haptic("success");
+  alert(`✅ Carichi e Peso salvati nel Vault (PERSONAL_TRAINER.md):\n${summary}`);
+}
+
+function addCustomGroceryItem() {
+  const inp = document.getElementById("custom-grocery-input");
+  const val = (inp?.value || "").trim();
+  if (!val) return;
+  haptic("light");
+  const items = JSON.parse(localStorage.getItem("virgo_custom_grocery") || "[]");
+  items.push({ text: val, done: false });
+  localStorage.setItem("virgo_custom_grocery", JSON.stringify(items));
+  if (inp) inp.value = "";
+  renderCustomGrocery();
+}
+
+function toggleCustomGrocery(idx) {
+  haptic("selection");
+  const items = JSON.parse(localStorage.getItem("virgo_custom_grocery") || "[]");
+  if (items[idx]) {
+    items[idx].done = !items[idx].done;
+    localStorage.setItem("virgo_custom_grocery", JSON.stringify(items));
+    renderCustomGrocery();
+  }
+}
+
+function renderCustomGrocery() {
+  const box = document.getElementById("custom-grocery-list");
+  if (!box) return;
+  const items = JSON.parse(localStorage.getItem("virgo_custom_grocery") || "[]");
+  box.innerHTML = "";
+  items.forEach((it, idx) => {
+    const lbl = document.createElement("label");
+    lbl.className = "check-item";
+    lbl.innerHTML = `
+      <input type="checkbox" ${it.done ? "checked" : ""} onchange="toggleCustomGrocery(${idx})">
+      <span class="custom-chk"></span>
+      <span class="check-text">🛒 ${it.text}</span>
+    `;
+    box.appendChild(lbl);
+  });
+}
+
+function updateS07Appts(delta) {
+  haptic("light");
+  let cur = parseInt(localStorage.getItem("virgo_s07_appts") || "0", 10);
+  cur = Math.max(0, cur + delta);
+  localStorage.setItem("virgo_s07_appts", String(cur));
+  updateS07ApptsUI(cur);
+}
+
+function updateS07ApptsUI(count) {
+  const valEl = document.getElementById("s07-appt-val");
+  const badgeEl = document.getElementById("s07-appt-badge");
+  if (valEl) valEl.innerText = String(count);
+  if (badgeEl) badgeEl.innerText = `${count} / 5 Appuntamenti`;
+}
+
+function addS07Lead() {
+  const inp = document.getElementById("s07-lead-input");
+  const val = (inp?.value || "").trim();
+  if (!val) return;
+  haptic("success");
+  const leads = JSON.parse(localStorage.getItem("virgo_s07_leads") || "[]");
+  leads.push(val);
+  localStorage.setItem("virgo_s07_leads", JSON.stringify(leads));
+  if (inp) inp.value = "";
+  renderS07Leads();
+
+  // Sincronizza anche con Q094 nel Vault
+  q360Answers["Q094"] = leads.join(", ");
+  localStorage.setItem("virgo_q360_answers", JSON.stringify(q360Answers));
+  scheduleLocalVaultAutoSync();
+}
+
+function removeS07Lead(idx) {
+  haptic("light");
+  const leads = JSON.parse(localStorage.getItem("virgo_s07_leads") || "[]");
+  leads.splice(idx, 1);
+  localStorage.setItem("virgo_s07_leads", JSON.stringify(leads));
+  renderS07Leads();
+}
+
+function renderS07Leads() {
+  const box = document.getElementById("s07-leads-list");
+  if (!box) return;
+  const leads = JSON.parse(localStorage.getItem("virgo_s07_leads") || "[]");
+  box.innerHTML = "";
+  leads.forEach((name, idx) => {
+    const chip = document.createElement("span");
+    chip.className = "s07-lead-chip";
+    chip.innerHTML = `👤 ${name} <button type="button" onclick="removeS07Lead(${idx})">×</button>`;
+    box.appendChild(chip);
+  });
+}
+
+function setRunwayStage(stage, silent = false) {
+  if (!silent) haptic("selection");
+  localStorage.setItem("virgo_runway_stage", String(stage));
+  const labels = {
+    1: "Fase 1: Trincea (100€)",
+    2: "Fase 2: Accredito S07 (+500€)",
+    3: "Fase 3: Scudo (1.500€)",
+    4: "Fase 4: Respiro (5.000€)"
+  };
+  [1, 2, 3, 4].forEach(s => {
+    document.getElementById(`rw-${s}`)?.classList.toggle("active", s <= stage);
+  });
+  const lbl = document.getElementById("runway-stage-label");
+  if (lbl) lbl.innerText = labels[stage] || labels[1];
+}
 
 function initQ360() {
+  initExtraModules();
   try {
     q360Answers = JSON.parse(localStorage.getItem("virgo_q360_answers") || "{}");
   } catch (e) {
     q360Answers = {};
   }
-  const savedYt = localStorage.getItem("virgo_q360_yt_links") || "";
-  const ytEl = document.getElementById("q360-yt-links");
-  if (ytEl) ytEl.value = savedYt;
 
   renderQ360List();
   updateQ360Progress();
@@ -798,10 +1231,6 @@ function initQ360() {
             changed = true;
           }
         });
-        if (data.yt_links && !localStorage.getItem("virgo_q360_yt_links")) {
-          localStorage.setItem("virgo_q360_yt_links", data.yt_links);
-          if (ytEl) ytEl.value = data.yt_links;
-        }
         if (changed) {
           localStorage.setItem("virgo_q360_answers", JSON.stringify(q360Answers));
           renderQ360List();
@@ -837,7 +1266,7 @@ function renderQ360List() {
   });
 
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="card"><p class="card-sub" style="margin:0;">Nessuna domanda in questo filtro.</p></div>`;
+    container.innerHTML = `<div class="card"><p class="card-sub" style="margin:0;">🎉 Tutte le domande di questa vista sono state completate! Vai su <strong>✅ Archiviate</strong> per rivederle.</p></div>`;
     return;
   }
 
@@ -850,11 +1279,14 @@ function renderQ360List() {
     card.innerHTML = `
       <div class="q360-item-top">
         <span class="q360-code">${q.id}</span>
-        <span class="q360-status-badge" id="badge-${q.id}">${isAnswered ? "✅ Salvata" : "⬜ Da compilare"}</span>
+        <span class="q360-status-badge" id="badge-${q.id}">${isAnswered ? "✅ Archiviata nel Vault" : "⬜ Da compilare"}</span>
       </div>
       <div class="q360-title">${q.title}</div>
       <div class="q360-prompt">${q.prompt}</div>
-      <textarea class="q360-input" id="input-${q.id}" placeholder="Scrivi qui la tua risposta (anche a voce col microfono della tastiera)..." oninput="onQ360Input('${q.id}', this.value)"></textarea>
+      <textarea class="q360-input" id="input-${q.id}" placeholder="Scrivi qui la tua risposta (anche a voce) e poi premi Salva & Archivia..."></textarea>
+      <div class="q360-save-row">
+        <button type="button" class="pill-btn primary" onclick="saveSingleQ360('${q.id}')">💾 Salva & Archivia</button>
+      </div>
     `;
     container.appendChild(card);
     const ta = card.querySelector("textarea");
@@ -862,36 +1294,40 @@ function renderQ360List() {
   });
 }
 
-function onQ360Input(qid, val) {
-  const clean = val.trim();
-  if (clean) {
-    q360Answers[qid] = val;
-  } else {
-    delete q360Answers[qid];
+function saveSingleQ360(qid) {
+  const ta = document.getElementById(`input-${qid}`);
+  const val = (ta?.value || "").trim();
+  if (!val) {
+    haptic("warning");
+    return;
   }
+  haptic("success");
+  q360Answers[qid] = val;
   localStorage.setItem("virgo_q360_answers", JSON.stringify(q360Answers));
+  updateQ360Progress();
+  pushQ360ToLocalServer(false);
 
   const card = document.getElementById(`card-${qid}`);
   const badge = document.getElementById(`badge-${qid}`);
-  if (card) card.classList.toggle("answered", clean.length > 0);
-  if (badge) badge.innerText = clean.length > 0 ? "✅ Salvata" : "⬜ Da compilare";
-
-  updateQ360Progress();
-  scheduleLocalVaultAutoSync();
-}
-
-function saveQ360YoutubeLinks(val) {
-  localStorage.setItem("virgo_q360_yt_links", val);
-  scheduleLocalVaultAutoSync();
+  if (badge) badge.innerText = "✅ Salvata nel Vault!";
+  if (card && q360FilterMode === "todo") {
+    card.classList.add("hiding-out");
+    setTimeout(() => {
+      renderQ360List();
+    }, 280);
+  }
 }
 
 function updateQ360Progress() {
   const answeredCount = Q360_QUESTIONS.filter(q => (q360Answers[q.id] || "").trim().length > 0).length;
+  const todoCount = 100 - answeredCount;
   const pct = Math.round((answeredCount / 100) * 100);
   const pText = document.getElementById("q360-progress-text");
   const pFill = document.getElementById("q360-progress-fill");
-  if (pText) pText.innerText = `${answeredCount} / 100 (${pct}%)`;
+  const tabCount = document.getElementById("q100-todo-tab-count");
+  if (pText) pText.innerText = `${answeredCount} / 100 (${pct}%) • ${todoCount} da fare`;
   if (pFill) pFill.style.width = `${pct}%`;
+  if (tabCount) tabCount.innerText = String(todoCount);
 }
 
 function scheduleLocalVaultAutoSync() {

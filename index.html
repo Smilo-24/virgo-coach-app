@@ -256,6 +256,37 @@
             <button class="pill-btn secondary" onclick="switchTab('checkin')">📝 Vai al Check-in</button>
           </div>
         </div>
+
+        <!-- 🏋️ IDEA LIVE 4: TRACKER PESO (74 -> 72 KG) & CARICHI SALA PESI -->
+        <div class="card">
+          <div class="card-header-flex">
+            <div class="card-header-left">
+              <span class="card-icon">⚖️</span>
+              <h3>Tracker Peso & Carichi Sala Pesi</h3>
+            </div>
+            <span class="mini-counter" id="weight-badge-counter">74.0 kg ➔ 72.0 kg</span>
+          </div>
+          <p class="card-sub">Aggiorna il peso e i tuoi massimali/carichi di riferimento (salvati anche nel Vault):</p>
+          <div class="gym-metrics-grid">
+            <div class="gym-metric-box">
+              <label>⚖️ Peso Attuale (kg)</label>
+              <input type="text" id="gym-weight" placeholder="74.0" oninput="saveGymMetric('weight', this.value)">
+            </div>
+            <div class="gym-metric-box">
+              <label>🏋️ Panca / Spinte</label>
+              <input type="text" id="gym-bench" placeholder="es. 70kg x 8" oninput="saveGymMetric('bench', this.value)">
+            </div>
+            <div class="gym-metric-box">
+              <label>🦅 Trazioni / Lat</label>
+              <input type="text" id="gym-pull" placeholder="es. BW x 10" oninput="saveGymMetric('pull', this.value)">
+            </div>
+            <div class="gym-metric-box">
+              <label>🦵 Squat / Pressa</label>
+              <input type="text" id="gym-legs" placeholder="es. 120kg x 10" oninput="saveGymMetric('legs', this.value)">
+            </div>
+          </div>
+          <button class="pill-btn secondary full" style="margin-top:10px;" onclick="syncGymMetricsToVault()">💾 Salva Carichi & Peso in PERSONAL_TRAINER.md</button>
+        </div>
       </section>
 
       <!-- ===================================================================
@@ -319,6 +350,14 @@
               <p class="card-sub" style="margin-bottom:0;">Tocca i prodotti mentre li metti nel carrello:</p>
               <button class="reset-link-btn" onclick="resetGroceryList()">🔄 Svuota</button>
             </div>
+
+            <!-- 🛒 IDEA LIVE 8: Aggiungi Prodotto Extra al volo -->
+            <div class="custom-grocery-add">
+              <input type="text" id="custom-grocery-input" placeholder="+ Aggiungi prodotto extra per casa..."
+                onkeydown="if(event.key==='Enter') addCustomGroceryItem()">
+              <button class="pill-btn primary" onclick="addCustomGroceryItem()">+ Aggiungi</button>
+            </div>
+            <div id="custom-grocery-list" class="checklist" style="margin-bottom: 8px;"></div>
 
             <div class="grocery-category">
               <div class="cat-title">🥩 Proteine Nobili</div>
@@ -440,6 +479,10 @@
 
         <!-- VISTA RICETTE VELOCI & PREFERITE DAL VAULT -->
         <div id="view-food-recipes" class="food-view" style="display: none;">
+          <div style="margin-bottom: 12px;">
+            <button class="pill-btn primary full" onclick="openVaultFeederCategory('ricetta')">👨‍🍳 + Aggiungi Nuova Ricetta al Vault</button>
+          </div>
+          <div id="custom-recipes-container" class="meals-grid" style="margin-bottom: 12px;"></div>
           <div class="meals-grid">
             <div class="meal-card highlight-recipe">
               <div class="meal-tag">🏆 RICETTA D'AUTORE DEL VAULT • SERATA RELAX</div>
@@ -481,16 +524,58 @@
           <p>La scalata professionale reale e le ancore di forza mentale.</p>
         </div>
 
-        <!-- Selettore Sotto-Schede: Carriera vs Guerrieri vs Fede -->
+        <!-- Selettore Sotto-Schede: Carriera vs Guerrieri vs Libri vs Fede -->
         <div class="sub-tabs">
-          <button class="sub-tab-btn active" id="btn-sub-career" onclick="switchMentorView('career')">💼 Carriera
-            S07</button>
+          <button class="sub-tab-btn active" id="btn-sub-career" onclick="switchMentorView('career')">💼 S07</button>
           <button class="sub-tab-btn" id="btn-sub-warriors" onclick="switchMentorView('warriors')">⚔️ Guerrieri</button>
+          <button class="sub-tab-btn" id="btn-sub-books" onclick="switchMentorView('books')">📖 Libri</button>
           <button class="sub-tab-btn" id="btn-sub-faith" onclick="switchMentorView('faith')">✝️ Fede</button>
         </div>
 
         <!-- VISTA CARRIERA (Sincronizzata con Coach_Office) -->
         <div id="view-career" class="mentor-view">
+          <!-- 📞 IDEA LIVE 5: CONTATORE APPUNTAMENTI S07 & CONTATTI CALDI TORINO -->
+          <div class="card s07-crm-card">
+            <div class="card-header-flex">
+              <div class="card-header-left">
+                <span class="card-icon">📞</span>
+                <h3>Pipeline Operativa S07 (Torino)</h3>
+              </div>
+              <span class="mini-counter" id="s07-appt-badge">0 / 5 Appuntamenti</span>
+            </div>
+            <div class="s07-counter-row">
+              <span>Appuntamenti Fissati Settimana:</span>
+              <div class="s07-stepper">
+                <button class="step-btn" onclick="updateS07Appts(-1)">−</button>
+                <strong id="s07-appt-val">0</strong>
+                <button class="step-btn" onclick="updateS07Appts(1)">+</button>
+              </div>
+            </div>
+            <div class="custom-grocery-add" style="margin-top: 10px; margin-bottom: 6px;">
+              <input type="text" id="s07-lead-input" placeholder="+ Nome contatto caldo (amico/famiglia/cliente)..."
+                onkeydown="if(event.key==='Enter') addS07Lead()">
+              <button class="pill-btn primary" onclick="addS07Lead()">+ Salva</button>
+            </div>
+            <div id="s07-leads-list" class="s07-leads-box"></div>
+          </div>
+
+          <!-- 🛡️ IDEA LIVE 6: SCUDO FINANZIARIO TRINCEA -> RESPIRO -->
+          <div class="card">
+            <div class="card-header-flex">
+              <div class="card-header-left">
+                <span class="card-icon">🛡️</span>
+                <h3>Scalata Liquidità & Trincea</h3>
+              </div>
+              <span class="mini-counter" id="runway-stage-label">Fase 1: Trincea</span>
+            </div>
+            <div class="runway-steps">
+              <button class="runway-chip active" id="rw-1" onclick="setRunwayStage(1)">1. Trincea (100€)</button>
+              <button class="runway-chip" id="rw-2" onclick="setRunwayStage(2)">2. Accredito S07 (+500€)</button>
+              <button class="runway-chip" id="rw-3" onclick="setRunwayStage(3)">3. Scudo (1.500€)</button>
+              <button class="runway-chip" id="rw-4" onclick="setRunwayStage(4)">4. Respiro (5.000€)</button>
+            </div>
+          </div>
+
           <div class="card career-hub-card">
             <div class="career-top-badge">
               <span>🏛️ SEDE S07 — VIA GARIBALDI 7, TORINO</span>
@@ -560,6 +645,20 @@
               <button class="pill-btn primary full" onclick="nextWarrior()">🎲 Prossimo Mentore</button>
             </div>
           </div>
+          <button class="pill-btn secondary full" onclick="openVaultFeederCategory('guerriero')">⚔️ + Aggiungi Citazione Guerriero al Vault</button>
+        </div>
+
+        <!-- 📖 IDEA LIVE 3: VISTA FRASI DI LIBRI & LETTURE -->
+        <div id="view-books" class="mentor-view" style="display: none;">
+          <div class="warrior-swipe-card" id="book-card" style="border-color: rgba(16, 185, 129, 0.35);">
+            <div class="warrior-author" id="b-title" style="color: #10b981;">📖 JIM ROHN — Le 4 Grandi Domande</div>
+            <div class="warrior-quote" id="b-quote">«Non desiderare che sia più facile, desidera di essere migliore. Se il perché è forte, il come diventa facile.»</div>
+            <div class="warrior-focus" id="b-focus">📚 <strong>Lezione atomizzata:</strong> Il tuo reddito e la tua libertà crescono esattamente nella misura in cui cresci tu.</div>
+            <div class="card-footer-action">
+              <button class="pill-btn primary full" onclick="nextBookQuote()">📖 Prossima Frase di Libro</button>
+            </div>
+          </div>
+          <button class="pill-btn secondary full" onclick="openVaultFeederCategory('libro')">📖 + Salva Nuova Frase dal Libro che stai leggendo</button>
         </div>
 
         <!-- VISTA FEDE -->
@@ -664,74 +763,132 @@
       </section>
 
       <!-- ===================================================================
-           TAB 6: QUESTIONARIO 360° (100 DOMANDE & LINK YOUTUBE)
+           TAB 6: ALIMENTA IL VAULT (PERMANENTE PER CATEGORIA) + 100 Q (360°)
            =================================================================== -->
       <section id="tab-q360" class="tab-page">
         <div class="section-header">
-          <h2>🧬 Questionario 360° (100 Q)</h2>
-          <p>Compila con calma nel tempo dal telefono o dal PC. Ogni risposta si salva subito e nutre il Vault.</p>
+          <h2>🧬 Alimenta il Vault Virgo</h2>
+          <p>Salva permanentemente per categoria (Libri, Link, Ricette, Pensieri) o rispondi con calma ai 100 quesiti.</p>
         </div>
 
-        <!-- Progresso 100 Domande + Bottone Sync Vault -->
-        <div class="card q360-hero-card">
-          <div class="daily-progress-box" style="margin-bottom: 12px;">
-            <div class="progress-top">
-              <span class="progress-label">🧬 Mappa di Simone Completata</span>
-              <span class="progress-pct" id="q360-progress-text">0 / 100 (0%)</span>
+        <!-- Selettore Modalità: Permanente (Per Categoria) vs Questionario 100 Q -->
+        <div class="sub-tabs">
+          <button class="sub-tab-btn active" id="btn-vault-perm" onclick="switchVaultMode('perm')">➕ Aggiungi al Vault</button>
+          <button class="sub-tab-btn" id="btn-vault-q100" onclick="switchVaultMode('q100')">🧬 100 Quesiti (<span id="q100-todo-tab-count">100</span>)</button>
+        </div>
+
+        <!-- ===============================================================
+             MODALITÀ 1 (PERMANENTE): AGGIUNGI AL VAULT PER CATEGORIA
+             =============================================================== -->
+        <div id="view-vault-perm">
+          <div class="card q360-hero-card">
+            <div class="card-header-flex">
+              <div class="card-header-left">
+                <span class="card-icon">🏛️</span>
+                <h3>Cattura Permanente nel Vault</h3>
+              </div>
+              <span class="mini-counter">Sempre Attivo</span>
             </div>
-            <div class="progress-bar-bg">
-              <div class="progress-bar-fill" id="q360-progress-fill" style="width: 0%;"></div>
+            <p class="card-sub">Scegli la categoria, scrivi o detta col microfono e premi Salva: finisce dritto nel file Markdown corrispondente del Vault.</p>
+
+            <!-- Griglia Categorie Rapide (8 Categorie) -->
+            <div class="vault-cat-grid" id="vault-cat-grid">
+              <button type="button" class="vault-cat-chip active" data-cat="libro" onclick="selectVaultCategory('libro')">📖 Frasi Libri</button>
+              <button type="button" class="vault-cat-chip" data-cat="youtube" onclick="selectVaultCategory('youtube')">🎬 Link Video/Pod</button>
+              <button type="button" class="vault-cat-chip" data-cat="ricetta" onclick="selectVaultCategory('ricetta')">👨‍🍳 Ricette & Cibo</button>
+              <button type="button" class="vault-cat-chip" data-cat="pensiero" onclick="selectVaultCategory('pensiero')">🧠 Pensieri</button>
+              <button type="button" class="vault-cat-chip" data-cat="guerriero" onclick="selectVaultCategory('guerriero')">⚔️ Cit. Guerrieri</button>
+              <button type="button" class="vault-cat-chip" data-cat="fede" onclick="selectVaultCategory('fede')">✝️ Versetti & Fede</button>
+              <button type="button" class="vault-cat-chip" data-cat="angela" onclick="selectVaultCategory('angela')">❤️ Angela & Casa</button>
+              <button type="button" class="vault-cat-chip" data-cat="palestra" onclick="selectVaultCategory('palestra')">🏋️ Scheda & Sport</button>
+            </div>
+
+            <div class="vault-target-badge" id="vault-target-file">
+              📂 Destinazione Vault: <strong>08_cultura/LIBRERIA.md</strong> (Sezione Frasi dai Libri)
+            </div>
+
+            <div class="form-group" style="margin-bottom: 10px;">
+              <input type="text" id="vault-entry-title" class="q360-select"
+                placeholder="Titolo / Autore del Libro (es. Jim Rohn - I 5 Pezzi del Puzzle)..."
+                style="font-weight: 500;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 12px;">
+              <textarea id="vault-entry-content" class="q360-input" rows="4"
+                placeholder="Scrivi o incolla qui la frase del libro, l'idea o l'insegnamento che vuoi salvare e atomizzare nel Vault..."></textarea>
+            </div>
+
+            <button type="button" class="submit-btn" onclick="submitPermanentVaultEntry()">
+              <span>💾 Salva Permanentemente nel Vault</span>
+            </button>
+
+            <div id="vault-perm-feedback" class="feedback-msg" style="display: none;"></div>
+          </div>
+
+          <!-- Storico elementi aggiunti permanentemente al Vault -->
+          <div class="card">
+            <div class="card-header-flex">
+              <div class="card-header-left">
+                <span class="card-icon">📚</span>
+                <h3>Ultimi Salvataggi nel Vault</h3>
+              </div>
+              <span class="mini-counter" id="vault-perm-count">0 salvati</span>
+            </div>
+            <div id="vault-perm-history" class="history-list">
+              <p class="card-sub" style="margin-bottom:0;">Nessun elemento ancora inviato da questa scheda.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===============================================================
+             MODALITÀ 2 (ONBOARDING 360°): 100 QUESITI (SCOMPAIONO AL SALVATAGGIO)
+             =============================================================== -->
+        <div id="view-vault-q100" style="display: none;">
+          <div class="card q360-hero-card">
+            <div class="daily-progress-box" style="margin-bottom: 12px;">
+              <div class="progress-top">
+                <span class="progress-label">🧬 Mappa 100 Quesiti Completata</span>
+                <span class="progress-pct" id="q360-progress-text">0 / 100 (0%)</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="q360-progress-fill" style="width: 0%;"></div>
+              </div>
+            </div>
+            <p class="card-sub" style="margin-bottom:10px;">Quando rispondi a una domanda e premi <strong>💾 Salva & Archivia</strong>, la risposta va nel Vault e la domanda sparisce dalla coda "Da fare"!</p>
+            <div class="hero-actions">
+              <button class="pill-btn primary" onclick="syncQ360ToVault()">🚀 Sincronizza Tutte</button>
+              <button class="pill-btn secondary" onclick="copyQ360Answers()">📋 Copia Risposte</button>
+            </div>
+            <div id="q360-sync-feedback" class="feedback-msg" style="display: none; margin-top: 10px;"></div>
+          </div>
+
+          <!-- Filtri Categoria (10 Aree) & Stato (Default: Da fare!) -->
+          <div class="card q360-filter-card">
+            <div class="q360-filter-row">
+              <select id="q360-cat-select" class="q360-select" onchange="renderQ360List()">
+                <option value="all">📂 Tutte le 10 Aree (Q001–Q100)</option>
+                <option value="1">🍽️ 1. Piatti Preferiti & Cucina (Q001–Q010)</option>
+                <option value="2">🏋️ 2. Corpo, Palestra, Boxe & Corsa (Q011–Q020)</option>
+                <option value="3">🎬 3. YouTube, Podcast, Jim Rohn & Mentori (Q021–Q030)</option>
+                <option value="4">📚 4. Libri, Film, Serie & Musica (Q031–Q040)</option>
+                <option value="5">✈️ 5. Viaggi, Esperienze & Stile di Vita (Q041–Q050)</option>
+                <option value="6">❤️ 6. Angela, Coppia & Futuro (Q051–Q060)</option>
+                <option value="7">🏠 7. Radici, Mamma, Famiglia & Amici (Q061–Q070)</option>
+                <option value="8">🔨 8. Passato Lavorativo, Spese & Soldi (Q071–Q080)</option>
+                <option value="9">🧠 9. Psicologia, Trigger & Carattere (Q081–Q090)</option>
+                <option value="10">✝️ 10. Fede, Contatti S07 & Visione (Q091–Q100)</option>
+              </select>
+            </div>
+            <div class="sub-tabs" style="margin-top: 10px; margin-bottom: 0;">
+              <button class="sub-tab-btn active" id="qfilter-todo" onclick="setQ360Filter('todo')">⬜ Da fare</button>
+              <button class="sub-tab-btn" id="qfilter-done" onclick="setQ360Filter('done')">✅ Archiviate</button>
+              <button class="sub-tab-btn" id="qfilter-all" onclick="setQ360Filter('all')">Tutte</button>
             </div>
           </div>
 
-          <div class="hero-actions">
-            <button class="pill-btn primary" onclick="syncQ360ToVault()">🚀 Salva nel Vault</button>
-            <button class="pill-btn secondary" onclick="copyQ360Answers()">📋 Copia Risposte</button>
-          </div>
-          <div id="q360-sync-feedback" class="feedback-msg" style="display: none; margin-top: 10px;"></div>
+          <!-- Lista Dinamica delle 100 Domande -->
+          <div id="q360-questions-container" class="q360-list"></div>
         </div>
-
-        <!-- Box Rapido Link YouTube / Podcast -->
-        <div class="card q360-yt-card">
-          <div class="card-header-flex">
-            <div class="card-header-left">
-              <span class="card-icon">🎬</span>
-              <h3>Inbox Link YouTube & Podcast</h3>
-            </div>
-            <span class="mini-counter">Auto-Save</span>
-          </div>
-          <p class="card-sub">Incolla qui i link di video YouTube (Jim Rohn, seminari, podcast) che vuoi farmi estrarre e riassumere nel Vault:</p>
-          <textarea id="q360-yt-links" rows="3"
-            placeholder="Incolla qui uno o più link YouTube (es. https://youtu.be/...) e note..."
-            oninput="saveQ360YoutubeLinks(this.value)"></textarea>
-        </div>
-
-        <!-- Filtri Categoria (10 Aree) & Stato -->
-        <div class="card q360-filter-card">
-          <div class="q360-filter-row">
-            <select id="q360-cat-select" class="q360-select" onchange="renderQ360List()">
-              <option value="all">📂 Tutte le 10 Aree (Q001–Q100)</option>
-              <option value="1">🍽️ 1. Piatti Preferiti & Cucina (Q001–Q010)</option>
-              <option value="2">🏋️ 2. Corpo, Palestra, Boxe & Corsa (Q011–Q020)</option>
-              <option value="3">🎬 3. YouTube, Podcast, Jim Rohn & Mentori (Q021–Q030)</option>
-              <option value="4">📚 4. Libri, Film, Serie & Musica (Q031–Q040)</option>
-              <option value="5">✈️ 5. Viaggi, Esperienze & Stile di Vita (Q041–Q050)</option>
-              <option value="6">❤️ 6. Angela, Coppia & Futuro (Q051–Q060)</option>
-              <option value="7">🏠 7. Radici, Mamma, Famiglia & Amici (Q061–Q070)</option>
-              <option value="8">🔨 8. Passato Lavorativo, Spese & Soldi (Q071–Q080)</option>
-              <option value="9">🧠 9. Psicologia, Trigger & Carattere (Q081–Q090)</option>
-              <option value="10">✝️ 10. Fede, Contatti S07 & Visione (Q091–Q100)</option>
-            </select>
-          </div>
-          <div class="sub-tabs" style="margin-top: 10px; margin-bottom: 0;">
-            <button class="sub-tab-btn active" id="qfilter-all" onclick="setQ360Filter('all')">Tutte</button>
-            <button class="sub-tab-btn" id="qfilter-todo" onclick="setQ360Filter('todo')">⬜ Da fare</button>
-            <button class="sub-tab-btn" id="qfilter-done" onclick="setQ360Filter('done')">✅ Fatto</button>
-          </div>
-        </div>
-
-        <!-- Lista Dinamica delle 100 Domande -->
-        <div id="q360-questions-container" class="q360-list"></div>
       </section>
 
     </main>
@@ -760,7 +917,7 @@
       </button>
       <button class="nav-item" onclick="switchTab('q360')" id="nav-q360">
         <span class="nav-icon">🧬</span>
-        <span class="nav-label">100 Q</span>
+        <span class="nav-label">Vault</span>
       </button>
     </nav>
   </div>
