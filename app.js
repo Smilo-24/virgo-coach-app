@@ -130,7 +130,7 @@ const WEEK_DATA = [
       { hour: 6, time: "06:40", title: "Sveglia & Acqua", desc: "500 ml d'acqua fresca, tapparelle aperte." },
       { hour: 7, time: "07:10", title: "🏃 Corsa 30' Mattutina", desc: "Passo sciolto e continuo, scarico pensieri." },
       { hour: 8, time: "08:00", title: "Colazione Atleta", desc: "Skyr 200g + 40g avena + frutti rossi + noci." },
-      { hour: 9, time: "09:00", title: "Focus Academy & Studio IVASS", desc: "Studio moduli e casi clienti in Sede S07." },
+      { hour: 9, time: "09:00", title: "Focus Operativo S07", desc: "Costruzione contatti, appuntamenti e prodotti in Sede S07." },
       { hour: 13, time: "13:00", title: "Pranzo Anti-Crash", desc: "80g pasta integrale + tonno + pomodorini e rucola." },
       { hour: 20, time: "20:30", title: "Cena & Spazio Sacro", desc: "Cena pulita, tempo di qualità con Angela." },
       { hour: 22, time: "22:15", title: "Curfew Notturno", desc: "Schermi OFF." }
@@ -158,7 +158,7 @@ const WEEK_DATA = [
       { hour: 6, time: "06:40", title: "Sveglia & Idratazione", desc: "Bicchiere d'acqua grande." },
       { hour: 7, time: "07:10", title: "🏃 Corsa 30'", desc: "Cadenza costante aerobica." },
       { hour: 8, time: "08:00", title: "Colazione Proteica", desc: "3 uova strapazzate + pane di segale + caffè amaro." },
-      { hour: 9, time: "09:00", title: "Focus Professionale", desc: "Attività Academy S07 e preparazione IVASS/OCF." },
+      { hour: 9, time: "09:00", title: "Focus Professionale S07", desc: "Operatività sul campo, prodotti Reale Group e clienti." },
       { hour: 13, time: "13:00", title: "Pranzo Leggero", desc: "Riso integrale + gamberetti/legumi + verdure." },
       { hour: 20, time: "20:30", title: "Cena Leggera", desc: "Frittata con verdure + abbondante insalata mista." },
       { hour: 22, time: "22:15", title: "Curfew Elettronico", desc: "Lettura su carta e sonno profondo." }
@@ -337,6 +337,19 @@ document.addEventListener("DOMContentLoaded", () => {
   loadChecklistState();
   updateAllCounters();
   renderCheckinHistory();
+
+  // Deep-link diretto alla scheda richiesta (es. ?tab=checkin, ?tab=workout, ?tab=cibo, ?tab=q360)
+  const params = new URLSearchParams(window.location.search);
+  const tabParam = params.get("tab");
+  if (tabParam && ["oggi", "workout", "cibo", "mentori", "checkin", "q360"].includes(tabParam)) {
+    switchTab(tabParam);
+  }
+  const foodViewParam = params.get("food");
+  if (foodViewParam && ["daily", "weekly", "recipes"].includes(foodViewParam)) {
+    switchFoodView(foodViewParam);
+  }
+
+  initQ360();
 });
 
 function checkDailyAutoReset() {
@@ -629,4 +642,358 @@ function submitCheckin(e) {
   setTimeout(() => {
     fb.style.display = "none";
   }, 5000);
+}
+
+// =============================================================================
+// 🧬 TAB 6: QUESTIONARIO 360° (100 DOMANDE & SYNC COL VAULT)
+// =============================================================================
+const Q360_QUESTIONS = [
+  // AREA 1: Piatti Preferiti & Cucina (1-10)
+  { id: "Q001", cat: 1, title: "I tuoi 5 piatti preferiti in assoluto", prompt: "Quali sono i 5 piatti che ami di più al mondo (oltre alla tua Gambero Pork e alle Tigelle)?" },
+  { id: "Q002", cat: 1, title: "Cosa NON ti piace mangiare (Cibi che odi)", prompt: "Quali sono gli alimenti, le verdure, i condimenti o i piatti che proprio non sopporti nel piatto?" },
+  { id: "Q003", cat: 1, title: "La tua colazione preferita (dolce vs salata)", prompt: "Al mattino cosa ti dà più soddisfazione mangiare quando hai tempo, e cosa nei giorni veloci?" },
+  { id: "Q004", cat: 1, title: "I tuoi pranzi veloci preferiti da settimana", prompt: "Quali sono i 3-4 pranzi puliti che mangi più volentieri durante la settimana senza annoiarti?" },
+  { id: "Q005", cat: 1, title: "Le tue cene preferite con Angela", prompt: "Cosa vi piace mangiare la sera a cena quando siete insieme a casa tranquilli?" },
+  { id: "Q006", cat: 1, title: "I tuoi cavalli di battaglia ai fornelli", prompt: "Quando cucini tu, quali sono i piatti che ti vengono meglio e ti diverte di più preparare?" },
+  { id: "Q007", cat: 1, title: "Il tuo Sgarro Reale / Comfort Food preferito", prompt: "Quando decidi di sgarrare sul serio (pizza, burger, sushi, dolci...), cosa scegli?" },
+  { id: "Q008", cat: 1, title: "I cibi-trappola sotto stress o stanchezza", prompt: "Quali sono gli snack o i cibi che ti fregano di più quando torni a casa stanco o nervoso?" },
+  { id: "Q009", cat: 1, title: "Cibi che ti gonfiano o ti tolgono energia", prompt: "Hai notato alimenti specifici che ti danno sonnolenza o pesantezza?" },
+  { id: "Q010", cat: 1, title: "Bevande, Caffè e Ristoranti preferiti a Torino", prompt: "Quanti caffè bevi, cosa bevi a tavola e quali sono i tuoi locali preferiti a Torino?" },
+
+  // AREA 2: Corpo, Palestra, Boxe & Corsa (11-20)
+  { id: "Q011", cat: 2, title: "Altezza e Peso Forma Ideale ('Tirato')", prompt: "Quanto sei alto esattamente e a quale peso ti sei visto davvero asciutto, forte e in forma?" },
+  { id: "Q012", cat: 2, title: "Cosa fai concretamente in Sala Pesi", prompt: "Che scheda o divisione muscolare segui in palestra e quali sono i tuoi esercizi fissi?" },
+  { id: "Q013", cat: 2, title: "I tuoi punti di forza muscolari e carichi", prompt: "In quali esercizi (panca, trazioni, squat, manubri, dip...) ti senti più forte e che carichi usi?" },
+  { id: "Q014", cat: 2, title: "Punti fisici dove vuoi migliorare", prompt: "Qual è la parte del corpo (addome/fianchi, petto, spalle, gambe) su cui vuoi spingere nei prossimi 90 giorni?" },
+  { id: "Q015", cat: 2, title: "Vecchi infortuni o fastidi articolari", prompt: "Hai articolazioni o zone delicate (spalle, schiena, ginocchia, polsi) a cui fare attenzione?" },
+  { id: "Q016", cat: 2, title: "La Boxe per te", prompt: "Cosa fai durante l'ora di boxe (sacco, vuoto, corda, guanti) e cosa ti dà mentalmente?" },
+  { id: "Q017", cat: 2, title: "La Corsa e il Fiato", prompt: "Dove corri a Torino, qual è la tua distanza ideale (5-10 km) e corri con musica o senza?" },
+  { id: "Q018", cat: 2, title: "Il tuo Sonno reale e Risveglio", prompt: "Cosa ti aiuta a dormire profondo e cosa ti rovina il sonno? Al mattino carburi subito?" },
+  { id: "Q019", cat: 2, title: "Integratori e Recupero", prompt: "Usi integratori (whey, creatina, magnesio, vitamine) e cosa senti che funziona su di te?" },
+  { id: "Q020", cat: 2, title: "Obiettivo Fisico a 6 Mesi", prompt: "Come vuoi vederti e sentirti fisicamente tra 6 mesi esatti?" },
+
+  // AREA 3: YouTube, Podcast, Jim Rohn & Mentori (21-30)
+  { id: "Q021", cat: 3, title: "Link YouTube e Video da farmi studiare", prompt: "Incolla qui i link dei video YouTube da cui vuoi che estragga le regole per il Vault:" },
+  { id: "Q022", cat: 3, title: "Jim Rohn: i concetti che ti hanno colpito di più", prompt: "Quali insegnamenti di Jim Rohn (4 Stagioni, Semina, Disciplina, Valore...) senti più tuoi?" },
+  { id: "Q023", cat: 3, title: "Podcast che ascolti o vorresti seguire", prompt: "Quali podcast italiani o stranieri ascolti quando cammini o viaggi?" },
+  { id: "Q024", cat: 3, title: "Canali YouTube preferiti", prompt: "Quali sono i 4-5 canali YouTube (crescita, finanza, tech, sport) che apri più volentieri?" },
+  { id: "Q025", cat: 3, title: "Il video o discorso per quando sei a terra", prompt: "C'è un video motivazionale o discorso preciso che metti in cuffia per ritrovare la fame?" },
+  { id: "Q026", cat: 3, title: "Giuseppe ('Il Vero Drago') — Ricordi e consigli", prompt: "Oltre a 'nessuno deve dirti quanto vali', quali altri consigli di Giuseppe porti con te?" },
+  { id: "Q027", cat: 3, title: "Luca Cucciatti e i riferimenti in S07", prompt: "Cosa apprezzi del metodo di Luca Cucciatti in Via Garibaldi 7 e cosa vuoi rubargli del mestiere?" },
+  { id: "Q028", cat: 3, title: "Il Guerriero più vicino a te oggi", prompt: "Tra Goggins, Kobe, Tyson, Bruce Lee, Robbins e Dispenza, chi senti più affine a te oggi?" },
+  { id: "Q029", cat: 3, title: "Un personaggio nuovo da aggiungere al Pantheon", prompt: "C'è un imprenditore, atleta o figura storica che ammiri e vuoi aggiungere al Vault?" },
+  { id: "Q030", cat: 3, title: "La tua Massima Personale", prompt: "Se dovessi scrivere una frase tua da rileggere ogni mattina, quale sarebbe?" },
+
+  // AREA 4: Libri, Film, Serie TV & Musica (31-40)
+  { id: "Q031", cat: 4, title: "I 3 Libri che ti hanno cambiato la testa", prompt: "Quali sono i libri che hai letto che ti hanno lasciato il segno più profondo?" },
+  { id: "Q032", cat: 4, title: "Libri sul comodino o da leggere", prompt: "Quali sono i prossimi 2-3 libri che hai a casa o vorresti leggere?" },
+  { id: "Q033", cat: 4, title: "I tuoi 5 Film preferiti della vita", prompt: "Oltre a The Founder, Rocky e Cinderella Man, quali film rivedresti dieci volte?" },
+  { id: "Q034", cat: 4, title: "La scena cinematografica che ti dà i brividi", prompt: "Qual è la scena specifica di un film in cui ti identifichi di più?" },
+  { id: "Q035", cat: 4, title: "Serie TV, Documentari o Anime preferiti", prompt: "Quali serie TV (es. The Chosen, Peaky Blinders, Suits, Billions...) o anime ami di più?" },
+  { id: "Q036", cat: 4, title: "La tua Musica da Guerra (Palestra & Boxe)", prompt: "Che generi, artisti o canzoni metti in cuffia quando spingi sotto i pesi o al sacco?" },
+  { id: "Q037", cat: 4, title: "La tua Musica da Concentrazione o Relax", prompt: "Cosa ascolti quando studi/lavori al PC o quando vuoi rilassare la mente?" },
+  { id: "Q038", cat: 4, title: "Una canzone che rappresenta la tua storia", prompt: "Quale canzone racconta meglio chi sei e da dove vieni?" },
+  { id: "Q039", cat: 4, title: "Biografie e Storie di Underdog", prompt: "Quale storia vera di riscatto (nello sport o nel business) ti ispira di più?" },
+  { id: "Q040", cat: 4, title: "Il tuo metodo ideale di apprendimento", prompt: "Quando studi una materia nuova, impari meglio da video, schemi pratici, libri o quiz?" },
+
+  // AREA 5: Viaggi, Esperienze & Stile di Vita (41-50)
+  { id: "Q041", cat: 5, title: "Il viaggio più bello che hai fatto finora", prompt: "Qual è stato il viaggio o il posto che ti è rimasto più nel cuore e perché?" },
+  { id: "Q042", cat: 5, title: "Gli anni dei viaggi e festival in Europa (2022–2024)", prompt: "Dove sei stato in quegli anni, quali festival/città hai visto e cosa ti hanno lasciato?" },
+  { id: "Q043", cat: 5, title: "I 3 viaggi che sogni di fare con Angela", prompt: "Quali sono le prime 3 mete dove vuoi portare Angela appena le finanze girano forte?" },
+  { id: "Q044", cat: 5, title: "Mare, Montagna o Città?", prompt: "Quando hai una settimana di vacanza vera, quale ambiente ti ricarica di più?" },
+  { id: "Q045", cat: 5, title: "La tua Domenica perfetta a Torino", prompt: "Come si svolge dalla mattina alla sera una domenica ideale per te e Angela?" },
+  { id: "Q046", cat: 5, title: "I tuoi luoghi del cuore a Torino", prompt: "Quali sono i parchi, le vie o i quartieri di Torino dove ti piace di più camminare?" },
+  { id: "Q047", cat: 5, title: "Passioni e Hobby fuori dal lavoro", prompt: "Cosa ti appassiona (cucina, motori, orologi, scacchi, gaming, natura...) quando stacchi?" },
+  { id: "Q048", cat: 5, title: "Un'esperienza da fare almeno una volta nella vita", prompt: "Qual è un'esperienza speciale che vuoi assolutamente vivere nei prossimi anni?" },
+  { id: "Q049", cat: 5, title: "La tua Casa Ideale", prompt: "Come immagini la casa in cui vorrai vivere con Angela e i vostri figli?" },
+  { id: "Q050", cat: 5, title: "Stile, Auto e Oggetti che ti piacciono", prompt: "Come ti piace vestirti e qual è l'auto o l'oggetto che vorrai comprarti coi primi grandi risultati?" },
+
+  // AREA 6: Angela, Coppia & Futuro Familiare (51-60)
+  { id: "Q051", cat: 6, title: "Il lavoro di Angela (Specializzazione & Ritmi)", prompt: "In quale reparto/specializzazione medica lavora Angela e che orari/turni fa?" },
+  { id: "Q052", cat: 6, title: "Date Importanti (Compleanno Angela & Anniversario)", prompt: "Qual è la data del compleanno di Angela e qual è la data del vostro anniversario?" },
+  { id: "Q053", cat: 6, title: "Cosa ami di più di Angela", prompt: "Quali sono i 3 lati del carattere di Angela che ti hanno fatto capire che è la donna della tua vita?" },
+  { id: "Q054", cat: 6, title: "Cosa fa felice Angela nei piccoli gesti", prompt: "Qual è l'attenzione a casa o il piatto preparato da te che le strappa subito il sorriso?" },
+  { id: "Q055", cat: 6, title: "La vostra organizzazione domestica", prompt: "Come vi dividete spesa, cucina e casa, e dove dai il tuo meglio nella convivenza?" },
+  { id: "Q056", cat: 6, title: "Come superate i momenti di stanchezza/tensione", prompt: "Qual è il modo migliore tra voi per parlarvi e sciogliere subito lo stress?" },
+  { id: "Q057", cat: 6, title: "La famiglia di Angela", prompt: "Come si chiamano i genitori/familiari di Angela e che rapporto hai con loro?" },
+  { id: "Q058", cat: 6, title: "I vostri 3 Obiettivi di Coppia per il 2027", prompt: "Quali sono i 3 traguardi concreti che volete raggiungere insieme entro fine 2027?" },
+  { id: "Q059", cat: 6, title: "Matrimonio e Paternità", prompt: "Come immagini il vostro matrimonio e che tipo di papà vuoi essere per i tuoi figli?" },
+  { id: "Q060", cat: 6, title: "La promessa a te stesso per Angela", prompt: "Qual è la sicurezza materiale e umana che vuoi garantire ad Angela nei prossimi 3 anni?" },
+
+  // AREA 7: Radici, Mamma, Famiglia & Amicizie (61-70)
+  { id: "Q061", cat: 7, title: "Le tue origini e dove sei cresciuto", prompt: "Dove sei nato esattamente, in che quartiere/città sei cresciuto e che ricordi hai?" },
+  { id: "Q062", cat: 7, title: "Tua Mamma", prompt: "Come si chiama tua mamma, quanti anni ha, che lavoro ha fatto e che legame avete?" },
+  { id: "Q063", cat: 7, title: "Il tuo sogno per tua Mamma", prompt: "Cosa vuoi fare concretamente per 'sistemare tua madre' appena avrai solidità finanziaria?" },
+  { id: "Q064", cat: 7, title: "Tuo Papà", prompt: "Qual è la storia di tuo papà, che rapporto hai con lui e cosa ti ha insegnato?" },
+  { id: "Q065", cat: 7, title: "Fratelli o Sorelle", prompt: "Come si chiama tua sorella (o fratelli), cosa fa nella vita e che rapporto avete?" },
+  { id: "Q066", cat: 7, title: "L'episodio di gioventù che ti ha forgiato", prompt: "C'è un momento preciso di quando eri ragazzo che ti ha fatto crescere in fretta?" },
+  { id: "Q067", cat: 7, title: "Valori e limiti familiari", prompt: "Qual è il valore più bello ricevuto dalla tua famiglia e quale limite vuoi spezzare?" },
+  { id: "Q068", cat: 7, title: "Gli Amici Veri di oggi", prompt: "Chi sono oggi i 2-3 amici fidati che senti davvero vicini e puliti?" },
+  { id: "Q069", cat: 7, title: "Le qualità del tuo cerchio ristretto", prompt: "Quali qualità deve avere oggi una persona per meritare il tuo tempo e la tua fiducia?" },
+  { id: "Q070", cat: 7, title: "Il tuo compleanno (24 Agosto) e anno di nascita", prompt: "Qual è il tuo anno di nascita esatto e come ti piace festeggiare i traguardi?" },
+
+  // AREA 8: Passato Lavorativo, Spese Fisse & Trincea (71-80)
+  { id: "Q071", cat: 8, title: "I lavori fatti prima dell'informatica", prompt: "Quali lavori hai svolto tra i 16 e i 23 anni (cucina/ristorazione, turni, altro)?" },
+  { id: "Q072", cat: 8, title: "Cosa ti ha insegnato il lavoro duro", prompt: "Cosa ti hanno lasciato quei lavori sulla fatica fisica, la velocità e il valore dei soldi?" },
+  { id: "Q073", cat: 8, title: "Il meglio dei tuoi anni nell'IT", prompt: "Tra Pitagora, Targa Telematics, Wave e Bootcamp, qual è la competenza migliore che ti porti dietro?" },
+  { id: "Q074", cat: 8, title: "Spese Fisse Mensili esatte (Voce per Voce)", prompt: "Quanto ti esce ogni mese (quota affitto/bollette, spesa, palestra, telefono, trasporti)?" },
+  { id: "Q075", cat: 8, title: "Soglia di Pareggio e Soglia di Tranquillità", prompt: "Qual è la cifra netta mensile minima per stare in pareggio e quale per respirare?" },
+  { id: "Q076", cat: 8, title: "Allocazione accredito S07 e prime provvigioni", prompt: "Appena entrano i 500 € dell'Academy e le prime provvigioni, come li dividi?" },
+  { id: "Q077", cat: 8, title: "Il primo 'Respiro' sopra i 3.000–5.000 €", prompt: "Quando il conto tornerà sopra i 3-5k€ sicuri, qual è il primo regalo che farai a te e Angela?" },
+  { id: "Q078", cat: 8, title: "Il tuo rapporto profondo con il denaro", prompt: "Cosa rappresentano per te i soldi (non dipendere da nessuno, rispetto, protezione, libertà)?" },
+  { id: "Q079", cat: 8, title: "Il tuo punto di forza naturale coi clienti", prompt: "Nella consulenza in S07, qual è la tua dote migliore quando parli faccia a faccia con le persone?" },
+  { id: "Q080", cat: 8, title: "L'abilità commerciale su cui vuoi diventare letale", prompt: "Su quale fase (chiamata, referenze, chiusura, gestione obiezioni) vuoi migliorare di più?" },
+
+  // AREA 9: Psicologia, Trigger, Carattere & Punti Ciechi (81-90)
+  { id: "Q081", cat: 9, title: "I tuoi 3 Trigger Negativi principali", prompt: "Quali sono le 3 situazioni o comportamenti che ti fanno salire il nervoso più in fretta?" },
+  { id: "Q082", cat: 9, title: "Cosa ti spegne l'energia silenziosamente", prompt: "Quali sono le cose che ti svuotano di energia mentale e ti portano a chiuderti in silenzio?" },
+  { id: "Q083", cat: 9, title: "La tua mente sotto pressione estrema", prompt: "Quando sei a 100 € sul conto e sotto pressione, a cosa pensi appena sveglio o la sera a letto?" },
+  { id: "Q084", cat: 9, title: "Il segnale d'allarme del sovraccarico", prompt: "Qual è il primo campanello che indica che stai tirando troppo la corda?" },
+  { id: "Q085", cat: 9, title: "Il tuo più grande Pregio Caratteriale", prompt: "Qual è la qualità di Simone di cui vai più fiero e che nessuno potrà mai toglierti?" },
+  { id: "Q086", cat: 9, title: "Il Difetto o Punto Cieco da governare", prompt: "Qual è il lato del tuo carattere (impazienza, tutto-o-niente, orgoglio...) che vuoi domare?" },
+  { id: "Q087", cat: 9, title: "Cosa non tolleri negli altri", prompt: "Qual è l'atteggiamento umano (vittimismo, scuse, mancanza di parola) che ti fa chiudere subito?" },
+  { id: "Q088", cat: 9, title: "Cosa ti rimette in bolla in 30 minuti", prompt: "Dopo una giornata pesantissima, qual è l'azione concreta che in mezz'ora ti riporta centrato?" },
+  { id: "Q089", cat: 9, title: "Rivincita sugli altri vs Vittoria per te", prompt: "Quanto conta (1-10) dimostrare chi sei a chi dubitava, rispetto a vincere per te e Angela?" },
+  { id: "Q090", cat: 9, title: "Come vuoi che Virgo ti parli nei giorni duri", prompt: "Oltre a zero compassione, quali domande o ordini operativi ti sbloccano più velocemente?" },
+
+  // AREA 10: Fede, Operatività S07 & Visione 5-10 Anni (91-100)
+  { id: "Q091", cat: 10, title: "La tua Preghiera e il dialogo con Dio", prompt: "Come vivi la fede nella giornata reale (preghi al mattino/sera, parli con Dio camminando)?" },
+  { id: "Q092", cat: 10, title: "Il Versetto o Episodio Biblico più tuo", prompt: "C'è un episodio della vita di Gesù (o di The Chosen) che ti dà più forza nella fatica?" },
+  { id: "Q093", cat: 10, title: "Dove hai sentito la mano di Dio nella tua vita", prompt: "Guardando indietro (es. l'incontro con Angela), dove hai sentito che non era un caso?" },
+  { id: "Q094", cat: 10, title: "I primi 10 Contatti Caldi su Torino per S07", prompt: "Chi sono le prime persone (amici, conoscenti, parenti a Torino) da incontrare per S07?" },
+  { id: "Q095", cat: 10, title: "I Prodotti Reale Group su cui vuoi puntare subito", prompt: "Tra Protezione Persona (TCM/Salute), Welfare e Risparmio, quale senti più forte per iniziare?" },
+  { id: "Q096", cat: 10, title: "Obiettivo Numerico S07 a 90 giorni", prompt: "Quanti appuntamenti a settimana e quanti primi contratti ti poni come target entro febbraio?" },
+  { id: "Q097", cat: 10, title: "Traguardo Esame OCF (Consulente Finanziario)", prompt: "Entro quale mese del 2027 vuoi sostenere e superare l'esame OCF?" },
+  { id: "Q098", cat: 10, title: "Il ruolo futuro del Trading Quantitativo (Neo)", prompt: "Una volta stabilizzate le entrate S07, che posto avrà il trading nella tua settimana?" },
+  { id: "Q099", cat: 10, title: "Dove sarai tra 12 Mesi (24 Novembre 2027)", prompt: "Descrivi la tua giornata, il tuo conto, il tuo fisico e la tua casa con Angela tra un anno esatto:" },
+  { id: "Q100", cat: 10, title: "Messaggio del Simone di oggi (a 100 €) al Simone del 2031", prompt: "Cosa vuoi lasciare scritto oggi dal fondo della trincea al te stesso che avrà costruito tutto?" }
+];
+
+let q360FilterMode = "all"; // all | todo | done
+let q360Answers = {};
+let q360DebounceTimer = null;
+
+function initQ360() {
+  try {
+    q360Answers = JSON.parse(localStorage.getItem("virgo_q360_answers") || "{}");
+  } catch (e) {
+    q360Answers = {};
+  }
+  const savedYt = localStorage.getItem("virgo_q360_yt_links") || "";
+  const ytEl = document.getElementById("q360-yt-links");
+  if (ytEl) ytEl.value = savedYt;
+
+  renderQ360List();
+  updateQ360Progress();
+
+  // Se siamo su PC col bot attivo, carica eventuali risposte già presenti nel Vault
+  fetch("http://127.0.0.1:8765/api/q360", { method: "GET" })
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (data && data.answers) {
+        let changed = false;
+        Object.keys(data.answers).forEach(k => {
+          if (data.answers[k] && !q360Answers[k]) {
+            q360Answers[k] = data.answers[k];
+            changed = true;
+          }
+        });
+        if (data.yt_links && !localStorage.getItem("virgo_q360_yt_links")) {
+          localStorage.setItem("virgo_q360_yt_links", data.yt_links);
+          if (ytEl) ytEl.value = data.yt_links;
+        }
+        if (changed) {
+          localStorage.setItem("virgo_q360_answers", JSON.stringify(q360Answers));
+          renderQ360List();
+          updateQ360Progress();
+        }
+      }
+    })
+    .catch(() => {});
+}
+
+function setQ360Filter(mode) {
+  haptic("light");
+  q360FilterMode = mode;
+  ["all", "todo", "done"].forEach(m => {
+    const btn = document.getElementById(`qfilter-${m}`);
+    if (btn) btn.classList.toggle("active", m === mode);
+  });
+  renderQ360List();
+}
+
+function renderQ360List() {
+  const container = document.getElementById("q360-questions-container");
+  if (!container) return;
+  const catVal = document.getElementById("q360-cat-select")?.value || "all";
+
+  container.innerHTML = "";
+  const filtered = Q360_QUESTIONS.filter(q => {
+    if (catVal !== "all" && String(q.cat) !== String(catVal)) return false;
+    const ans = (q360Answers[q.id] || "").trim();
+    if (q360FilterMode === "todo" && ans.length > 0) return false;
+    if (q360FilterMode === "done" && ans.length === 0) return false;
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="card"><p class="card-sub" style="margin:0;">Nessuna domanda in questo filtro.</p></div>`;
+    return;
+  }
+
+  filtered.forEach(q => {
+    const val = q360Answers[q.id] || "";
+    const isAnswered = val.trim().length > 0;
+    const card = document.createElement("div");
+    card.className = "q360-item-card" + (isAnswered ? " answered" : "");
+    card.id = `card-${q.id}`;
+    card.innerHTML = `
+      <div class="q360-item-top">
+        <span class="q360-code">${q.id}</span>
+        <span class="q360-status-badge" id="badge-${q.id}">${isAnswered ? "✅ Salvata" : "⬜ Da compilare"}</span>
+      </div>
+      <div class="q360-title">${q.title}</div>
+      <div class="q360-prompt">${q.prompt}</div>
+      <textarea class="q360-input" id="input-${q.id}" placeholder="Scrivi qui la tua risposta (anche a voce col microfono della tastiera)..." oninput="onQ360Input('${q.id}', this.value)"></textarea>
+    `;
+    container.appendChild(card);
+    const ta = card.querySelector("textarea");
+    if (ta) ta.value = val;
+  });
+}
+
+function onQ360Input(qid, val) {
+  const clean = val.trim();
+  if (clean) {
+    q360Answers[qid] = val;
+  } else {
+    delete q360Answers[qid];
+  }
+  localStorage.setItem("virgo_q360_answers", JSON.stringify(q360Answers));
+
+  const card = document.getElementById(`card-${qid}`);
+  const badge = document.getElementById(`badge-${qid}`);
+  if (card) card.classList.toggle("answered", clean.length > 0);
+  if (badge) badge.innerText = clean.length > 0 ? "✅ Salvata" : "⬜ Da compilare";
+
+  updateQ360Progress();
+  scheduleLocalVaultAutoSync();
+}
+
+function saveQ360YoutubeLinks(val) {
+  localStorage.setItem("virgo_q360_yt_links", val);
+  scheduleLocalVaultAutoSync();
+}
+
+function updateQ360Progress() {
+  const answeredCount = Q360_QUESTIONS.filter(q => (q360Answers[q.id] || "").trim().length > 0).length;
+  const pct = Math.round((answeredCount / 100) * 100);
+  const pText = document.getElementById("q360-progress-text");
+  const pFill = document.getElementById("q360-progress-fill");
+  if (pText) pText.innerText = `${answeredCount} / 100 (${pct}%)`;
+  if (pFill) pFill.style.width = `${pct}%`;
+}
+
+function scheduleLocalVaultAutoSync() {
+  if (q360DebounceTimer) clearTimeout(q360DebounceTimer);
+  q360DebounceTimer = setTimeout(() => {
+    pushQ360ToLocalServer(false);
+  }, 900);
+}
+
+function pushQ360ToLocalServer(showFeedback = false) {
+  const ytLinks = localStorage.getItem("virgo_q360_yt_links") || "";
+  return fetch("http://127.0.0.1:8765/api/q360", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ answers: q360Answers, yt_links: ytLinks })
+  })
+    .then(r => r.ok ? r.json() : Promise.reject("non raggiungibile"))
+    .then(res => {
+      if (showFeedback) {
+        showQ360Feedback(`✅ Salvato direttamente in 05_mente/QUESTIONARIO_360.md (${res.updated || 0} risposte)!`);
+      }
+      return true;
+    })
+    .catch(() => false);
+}
+
+function showQ360Feedback(htmlMsg) {
+  const fb = document.getElementById("q360-sync-feedback");
+  if (!fb) return;
+  fb.className = "feedback-msg success";
+  fb.style.display = "block";
+  fb.innerHTML = htmlMsg;
+  setTimeout(() => {
+    fb.style.display = "none";
+  }, 5500);
+}
+
+async function syncQ360ToVault() {
+  haptic("success");
+  const ytLinks = (localStorage.getItem("virgo_q360_yt_links") || "").trim();
+  const cleanAnswers = {};
+  Object.keys(q360Answers).forEach(k => {
+    const v = (q360Answers[k] || "").trim();
+    if (v) cleanAnswers[k] = v;
+  });
+
+  const count = Object.keys(cleanAnswers).length;
+  if (count === 0 && !ytLinks) {
+    showQ360Feedback("✍️ Compila almeno una risposta o incolla un link YouTube prima di sincronizzare!");
+    return;
+  }
+
+  // 1. Prova il salvataggio diretto locale su PC (http://127.0.0.1:8765/api/q360)
+  const localOk = await pushQ360ToLocalServer(true);
+  if (localOk) return;
+
+  // 2. Se siamo da Telefono (Telegram Mini App), invia via tg.sendData (fino a 4000 byte)
+  const payloadObj = { answers: cleanAnswers, yt: ytLinks };
+  const payloadStr = "Q360_SYNC:" + JSON.stringify(payloadObj);
+
+  if (tg?.sendData && payloadStr.length <= 4000) {
+    try {
+      tg.sendData(payloadStr);
+      showQ360Feedback(`✅ ${count} risposte inviate a @VirgoCoach_bot per il Vault!`);
+      return;
+    } catch (e) {
+      console.warn("tg.sendData fallback:", e);
+    }
+  }
+
+  // 3. Fallback universale: copia negli appunti il blocco formattato pronto da incollare in chat Telegram
+  await copyQ360Answers(true);
+}
+
+async function copyQ360Answers(fromSyncFallback = false) {
+  haptic("light");
+  const ytLinks = (localStorage.getItem("virgo_q360_yt_links") || "").trim();
+  const lines = ["Q360_BATCH:"];
+  if (ytLinks) {
+    lines.push(`YT: ${ytLinks.replace(/\n+/g, " | ")}`);
+  }
+  Q360_QUESTIONS.forEach(q => {
+    const v = (q360Answers[q.id] || "").trim();
+    if (v) {
+      lines.push(`${q.id}: ${v.replace(/\n+/g, " ")}`);
+    }
+  });
+
+  if (lines.length <= 1) {
+    showQ360Feedback("Nessuna risposta ancora compilata da copiare.");
+    return;
+  }
+
+  const textToCopy = lines.join("\n");
+  try {
+    await navigator.clipboard.writeText(textToCopy);
+    if (fromSyncFallback) {
+      showQ360Feedback(`📋 Risposte salvate sul telefono e copiate negli appunti! Incollale nella chat di @VirgoCoach_bot per scriverle subito nel Vault.`);
+    } else {
+      showQ360Feedback(`📋 ${lines.length - 1} risposte copiate! Puoi incollarle nella chat di @VirgoCoach_bot.`);
+    }
+  } catch (e) {
+    showQ360Feedback("✅ Risposte salvate nella memoria del dispositivo!");
+  }
 }

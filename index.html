@@ -1,27 +1,39 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Virgo Coach — Élite Assistant</title>
   <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap"
+    rel="stylesheet">
   <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <!-- Blocco PIN 1212 -->
-  <div id="privacy-lock-screen" style="position:fixed;inset:0;z-index:9999;background:#08090d;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
-    <div style="width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;font-family:'Outfit',sans-serif;font-weight:800;font-size:1.8rem;display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 0 24px rgba(229,169,59,0.4);">V</div>
+  <div id="privacy-lock-screen"
+    style="position:fixed;inset:0;z-index:9999;background:#08090d;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
+    <div
+      style="width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;font-family:'Outfit',sans-serif;font-weight:800;font-size:1.8rem;display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 0 24px rgba(229,169,59,0.4);">
+      V</div>
     <h2 style="font-family:'Outfit',sans-serif;color:#fff;margin-bottom:6px;">VIRGO COACH</h2>
-    <p style="font-size:0.84rem;color:#94a3b8;max-width:260px;margin-bottom:20px;">Inserisci il tuo PIN a 4 cifre per entrare:</p>
+    <p style="font-size:0.84rem;color:#94a3b8;max-width:260px;margin-bottom:20px;">Inserisci il tuo PIN a 4 cifre per
+      entrare:</p>
     <div style="display:flex;gap:8px;width:100%;max-width:220px;">
-      <input type="password" inputmode="numeric" maxlength="4" id="pin-input" placeholder="••••" oninput="if(this.value==='1212') unlockWithPin()" style="flex:1;background:#11141c;border:1px solid #232b3d;border-radius:10px;padding:10px 12px;color:#fff;text-align:center;font-size:1.2rem;letter-spacing:0.25em;outline:none;">
-      <button onclick="unlockWithPin()" style="background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:10px;padding:10px 16px;font-weight:800;color:#000;cursor:pointer;">OK</button>
+      <input type="password" inputmode="numeric" maxlength="4" id="pin-input" placeholder="••••"
+        oninput="if(this.value==='1212') unlockWithPin()"
+        style="flex:1;background:#11141c;border:1px solid #232b3d;border-radius:10px;padding:10px 12px;color:#fff;text-align:center;font-size:1.2rem;letter-spacing:0.25em;outline:none;">
+      <button onclick="unlockWithPin()"
+        style="background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:10px;padding:10px 16px;font-weight:800;color:#000;cursor:pointer;">OK</button>
     </div>
     <p id="pin-error" style="color:#ef4444;font-size:0.78rem;margin-top:10px;display:none;">PIN errato.</p>
   </div>
@@ -50,7 +62,7 @@
 
     <!-- Contenitore principale a schede scorrevoli -->
     <main class="content-container">
-      
+
       <!-- ===================================================================
            TAB 1: OGGI & ROUTINE
            =================================================================== -->
@@ -143,7 +155,7 @@
             <label class="check-item">
               <input type="checkbox" id="mv-3" onchange="toggleCheck(this)">
               <span class="custom-chk"></span>
-              <span class="check-text">3. Lavoro S07 o studio IVASS/OCF ≥ 60'</span>
+              <span class="check-text">3. Focus Operativo S07 ≥ 60'</span>
             </label>
             <label class="check-item">
               <input type="checkbox" id="mv-4" onchange="toggleCheck(this)">
@@ -219,8 +231,9 @@
         <div class="card workout-detail-card" id="workout-card">
           <div class="badge-type" id="workout-type-badge">🏋️ PALESTRA & FORZA</div>
           <h3 id="workout-name">Sessione di Carico & Forza</h3>
-          <p class="workout-desc" id="workout-desc">Progressione sui fondamentali, stabilità del core e stimolo muscolare pulito.</p>
-          
+          <p class="workout-desc" id="workout-desc">Progressione sui fondamentali, stabilità del core e stimolo
+            muscolare pulito.</p>
+
           <div class="workout-tips" id="workout-tips">
             <h4>⚡ Protocollo Esecutivo:</h4>
             <ul>
@@ -267,12 +280,14 @@
             <div class="meal-card">
               <div class="meal-tag">08:00 • COLAZIONE ATLETA</div>
               <h4>Energia Pulita & Proteine</h4>
-              <p>Skyr 200g + 40g fiocchi d'avena + frutti rossi + noci.<br><em>Oppure:</em> 3 uova strapazzate + pane integrale + caffè amaro.</p>
+              <p>Skyr 200g + 40g fiocchi d'avena + frutti rossi + noci.<br><em>Oppure:</em> 3 uova strapazzate + pane
+                integrale + caffè amaro.</p>
             </div>
             <div class="meal-card">
               <div class="meal-tag">13:00 • PRANZO ANTI-CRASH</div>
               <h4>Focus & Digeribilità (Sede Garibaldi)</h4>
-              <p>90g riso basmati/integrale + 150g petto di pollo o tonno + zucchine grigliate + 1 cucchiaio olio EVO.</p>
+              <p>90g riso basmati/integrale + 150g petto di pollo o tonno + zucchine grigliate + 1 cucchiaio olio EVO.
+              </p>
             </div>
             <div class="meal-card">
               <div class="meal-tag">18:00 • SPUNTINO PRE-WORKOUT</div>
@@ -282,14 +297,15 @@
             <div class="meal-card">
               <div class="meal-tag">20:30 • CENA DI RECUPERO</div>
               <h4>Protezione Sonno & Muscoli</h4>
-              <p>200g pesce bianco o salmone (o 3 uova) + abbondanti spinaci/broccoli + patata lessa o 1 fetta di segale.</p>
+              <p>200g pesce bianco o salmone (o 3 uova) + abbondanti spinaci/broccoli + patata lessa o 1 fetta di
+                segale.</p>
             </div>
           </div>
         </div>
 
         <!-- VISTA PIANO SETTIMANALE & SPESA -->
         <div id="view-food-weekly" class="food-view" style="display: none;">
-          
+
           <!-- Spesa Settimanale con Quantità per Reparto e Reset -->
           <div class="card grocery-card">
             <div class="card-header-flex">
@@ -307,40 +323,71 @@
             <div class="grocery-category">
               <div class="cat-title">🥩 Proteine Nobili</div>
               <div class="checklist">
-                <label class="check-item"><input type="checkbox" id="gr-1" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🥚 Uova fresche grandi (18–24 pezzi)</span></label>
-                <label class="check-item"><input type="checkbox" id="gr-2" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🍗 Petto di pollo / tacchino a fette (800g–1kg)</span></label>
-                <label class="check-item"><input type="checkbox" id="gr-3" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🐟 Salmone fresco / tranci di merluzzo (500g)</span></label>
-                <label class="check-item"><input type="checkbox" id="gr-4" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🐟 Tonno al naturale in vetro (6 confezioni)</span></label>
-                <label class="check-item"><input type="checkbox" id="gr-5" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🥣 Skyr naturale o yogurt greco 0% (4–5 vasetti)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-1" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🥚 Uova fresche grandi (18–24
+                    pezzi)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-2" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🍗 Petto di pollo / tacchino a fette
+                    (800g–1kg)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-3" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🐟 Salmone fresco / tranci di merluzzo
+                    (500g)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-4" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🐟 Tonno al naturale in vetro (6
+                    confezioni)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-5" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🥣 Skyr naturale o yogurt greco 0% (4–5
+                    vasetti)</span></label>
               </div>
             </div>
 
             <div class="grocery-category">
               <div class="cat-title">🌾 Carboidrati Puliti & Avena</div>
               <div class="checklist">
-                <label class="check-item"><input type="checkbox" id="gr-6" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🌾 Fiocchi d'avena integrali (500g)</span></label>
-                <label class="check-item"><input type="checkbox" id="gr-7" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🍚 Riso Basmati o riso integrale (1 kg)</span></label>
-                <label class="check-item"><input type="checkbox" id="gr-8" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🍞 Pane di segale integrale a fette</span></label>
-                <label class="check-item"><input type="checkbox" id="gr-9" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🥔 Patate dolci o classiche (1 kg)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-6" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🌾 Fiocchi d'avena integrali
+                    (500g)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-7" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🍚 Riso Basmati o riso integrale (1
+                    kg)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-8" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🍞 Pane di segale integrale a
+                    fette</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-9" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🥔 Patate dolci o classiche (1 kg)</span></label>
               </div>
             </div>
 
             <div class="grocery-category">
               <div class="cat-title">🥦 Verdure Fresche & Fibre</div>
               <div class="checklist">
-                <label class="check-item"><input type="checkbox" id="gr-10" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🥦 Zucchine fresche, broccoli e spinaci</span></label>
-                <label class="check-item"><input type="checkbox" id="gr-11" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🥗 Finocchi, insalata mista e carote</span></label>
-                <label class="check-item"><input type="checkbox" id="gr-12" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🍅 Pomodorini datterini per pasta e insalate</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-10" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🥦 Zucchine fresche, broccoli e
+                    spinaci</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-11" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🥗 Finocchi, insalata mista e
+                    carote</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-12" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🍅 Pomodorini datterini per pasta e
+                    insalate</span></label>
               </div>
             </div>
 
             <div class="grocery-category">
               <div class="cat-title">🥑 Grassi Sani & Frutta</div>
               <div class="checklist">
-                <label class="check-item"><input type="checkbox" id="gr-13" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🍌 Banane (1 casco per pre-workout)</span></label>
-                <label class="check-item"><input type="checkbox" id="gr-14" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🫐 Mirtilli / Frutti di bosco per colazione</span></label>
-                <label class="check-item"><input type="checkbox" id="gr-15" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🥜 Mandorle o noci sgusciate (200g)</span></label>
-                <label class="check-item"><input type="checkbox" id="gr-16" onchange="toggleCheck(this)"><span class="custom-chk"></span><span class="check-text">🫒 Olio Extravergine d'Oliva 100% italiano</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-13" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🍌 Banane (1 casco per
+                    pre-workout)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-14" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🫐 Mirtilli / Frutti di bosco per
+                    colazione</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-15" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🥜 Mandorle o noci sgusciate
+                    (200g)</span></label>
+                <label class="check-item"><input type="checkbox" id="gr-16" onchange="toggleCheck(this)"><span
+                    class="custom-chk"></span><span class="check-text">🫒 Olio Extravergine d'Oliva 100%
+                    italiano</span></label>
               </div>
             </div>
           </div>
@@ -354,31 +401,38 @@
             <div class="weekly-plan-list">
               <div class="plan-day-row">
                 <span class="day-badge">LUN</span>
-                <div class="plan-desc"><strong>Forza / Ring:</strong> Riso + pollo ai ferri • Snack banana/mandorle • Salmone e verdure</div>
+                <div class="plan-desc"><strong>Forza / Ring:</strong> Riso + pollo ai ferri • Snack banana/mandorle •
+                  Salmone e verdure</div>
               </div>
               <div class="plan-day-row">
                 <span class="day-badge">MAR</span>
-                <div class="plan-desc"><strong>Corsa / Focus:</strong> Pasta integrale tonno e pomodorini • Skyr/avena • Tacchino e finocchi</div>
+                <div class="plan-desc"><strong>Corsa / Focus:</strong> Pasta integrale tonno e pomodorini • Skyr/avena •
+                  Tacchino e finocchi</div>
               </div>
               <div class="plan-day-row">
                 <span class="day-badge">MER</span>
-                <div class="plan-desc"><strong>Palestra / Ring:</strong> Riso basmati e macinato magro • Yogurt greco • Orata al forno</div>
+                <div class="plan-desc"><strong>Palestra / Ring:</strong> Riso basmati e macinato magro • Yogurt greco •
+                  Orata al forno</div>
               </div>
               <div class="plan-day-row">
                 <span class="day-badge">GIO</span>
-                <div class="plan-desc"><strong>Corsa / Ufficio:</strong> Riso nero gamberetti/legumi • 3 uova strapazzate • Frittata leggera</div>
+                <div class="plan-desc"><strong>Corsa / Ufficio:</strong> Riso nero gamberetti/legumi • 3 uova
+                  strapazzate • Frittata leggera</div>
               </div>
               <div class="plan-day-row">
                 <span class="day-badge">VEN</span>
-                <div class="plan-desc"><strong>Core & Transizione:</strong> Pollo alla piastra e melanzane • Cena serena relax con Angela</div>
+                <div class="plan-desc"><strong>Core & Transizione:</strong> Pollo alla piastra e melanzane • Cena serena
+                  relax con Angela</div>
               </div>
               <div class="plan-day-row">
                 <span class="day-badge">SAB</span>
-                <div class="plan-desc"><strong>Corsa Lunga & Spesa:</strong> Colazione ricca post-corsa • Tigelle o Gambero Pork la sera</div>
+                <div class="plan-desc"><strong>Corsa Lunga & Spesa:</strong> Colazione ricca post-corsa • Tigelle o
+                  Gambero Pork la sera</div>
               </div>
               <div class="plan-day-row">
                 <span class="day-badge">DOM</span>
-                <div class="plan-desc"><strong>Camminata & Meal Prep:</strong> Cottura riso e verdure per 4 giorni • Cena distensiva</div>
+                <div class="plan-desc"><strong>Camminata & Meal Prep:</strong> Cottura riso e verdure per 4 giorni •
+                  Cena distensiva</div>
               </div>
             </div>
           </div>
@@ -390,22 +444,29 @@
             <div class="meal-card highlight-recipe">
               <div class="meal-tag">🏆 RICETTA D'AUTORE DEL VAULT • SERATA RELAX</div>
               <h4>🍤 La Gambero Pork (Specialità di Simone)</h4>
-              <p><strong>Ingredienti:</strong> Paccheri di qualità, gamberi freschi, guanciale croccante, pesto, stracciatella fresca.<br><strong>Topping:</strong> Granella di pistacchi, mandorle o nocciole tostate.</p>
+              <p><strong>Ingredienti:</strong> Paccheri di qualità, gamberi freschi, guanciale croccante, pesto,
+                stracciatella fresca.<br><strong>Topping:</strong> Granella di pistacchi, mandorle o nocciole tostate.
+              </p>
             </div>
             <div class="meal-card">
               <div class="meal-tag">🥞 COLAZIONE SABATO POST-CORSA (10 MIN)</div>
               <h4>Pancake Atleta Avena & Albumi</h4>
-              <p><strong>Mix:</strong> 50g farina/fiocchi d'avena + 150ml albume (o 1 uovo intero + 100ml albume) + pizzico cannella. Cuoci 2 min per lato in padella antiaderente. Guarnisci con mirtilli e 1 cucchiaino di burro d'arachidi o miele.</p>
+              <p><strong>Mix:</strong> 50g farina/fiocchi d'avena + 150ml albume (o 1 uovo intero + 100ml albume) +
+                pizzico cannella. Cuoci 2 min per lato in padella antiaderente. Guarnisci con mirtilli e 1 cucchiaino di
+                burro d'arachidi o miele.</p>
             </div>
             <div class="meal-card">
               <div class="meal-tag">🍱 MEAL PREP DOMENICA (4 PRANZI S07)</div>
               <h4>Bowl Garibaldi Anti-Crash</h4>
-              <p><strong>Batch cooking:</strong> Lessa 360g di riso basmati (90g x 4). Griglia 600g di petto di pollo a cubetti con erbe aromatiche e 4 zucchine a rondelle. Dividi in 4 schiscette: a filo 1 cucchiaio d'olio EVO a crudo.</p>
+              <p><strong>Batch cooking:</strong> Lessa 360g di riso basmati (90g x 4). Griglia 600g di petto di pollo a
+                cubetti con erbe aromatiche e 4 zucchine a rondelle. Dividi in 4 schiscette: a filo 1 cucchiaio d'olio
+                EVO a crudo.</p>
             </div>
             <div class="meal-card">
               <div class="meal-tag">🐟 CENA RECUPERO LAMPO (15 MIN)</div>
               <h4>Salmone & Broccoli Express</h4>
-              <p><strong>In forno/airfryer:</strong> Trancio di salmone da 200g con limone, pepe nero e aneto a 190°C per 14 minuti, accompagnato da broccoli al vapore conditi con olio EVO e sale marino.</p>
+              <p><strong>In forno/airfryer:</strong> Trancio di salmone da 200g con limone, pepe nero e aneto a 190°C
+                per 14 minuti, accompagnato da broccoli al vapore conditi con olio EVO e sale marino.</p>
             </div>
           </div>
         </div>
@@ -422,7 +483,8 @@
 
         <!-- Selettore Sotto-Schede: Carriera vs Guerrieri vs Fede -->
         <div class="sub-tabs">
-          <button class="sub-tab-btn active" id="btn-sub-career" onclick="switchMentorView('career')">💼 Carriera S07</button>
+          <button class="sub-tab-btn active" id="btn-sub-career" onclick="switchMentorView('career')">💼 Carriera
+            S07</button>
           <button class="sub-tab-btn" id="btn-sub-warriors" onclick="switchMentorView('warriors')">⚔️ Guerrieri</button>
           <button class="sub-tab-btn" id="btn-sub-faith" onclick="switchMentorView('faith')">✝️ Fede</button>
         </div>
@@ -435,7 +497,7 @@
             </div>
             <h3>Welfare Coach Academy</h3>
             <p class="company-sub">Italiana Assicurazioni (Reale Group) • Mentor: <strong>Luca Cucciatti</strong></p>
-            
+
             <div class="career-pillars">
               <div class="pillar-item">
                 <div class="pillar-label">OBIETTIVO STRATEGICO:</div>
@@ -481,7 +543,8 @@
             </div>
 
             <div class="career-quote-box">
-              «Questa è la strada che ho scelto per la mia vita: zero distrazioni esterne, competenza feroce, indipendenza economica e protezione del patrimonio familiare.»
+              «Questa è la strada che ho scelto per la mia vita: zero distrazioni esterne, competenza feroce,
+              indipendenza economica e protezione del patrimonio familiare.»
             </div>
           </div>
         </div>
@@ -491,7 +554,8 @@
           <div class="warrior-swipe-card" id="warrior-card">
             <div class="warrior-author" id="w-author">🐉 GIUSEPPE — Il Vero Drago</div>
             <div class="warrior-quote" id="w-quote">«Simo, nessuno deve dirti quanto vali.»</div>
-            <div class="warrior-focus" id="w-focus">💡 <strong>Focus:</strong> Nessun calo di forma o intoppo passeggero ha il potere di definire il tuo valore. Rialzati e cammina a testa alta.</div>
+            <div class="warrior-focus" id="w-focus">💡 <strong>Focus:</strong> Nessun calo di forma o intoppo passeggero
+              ha il potere di definire il tuo valore. Rialzati e cammina a testa alta.</div>
             <div class="card-footer-action">
               <button class="pill-btn primary full" onclick="nextWarrior()">🎲 Prossimo Mentore</button>
             </div>
@@ -502,8 +566,10 @@
         <div id="view-faith" class="mentor-view" style="display: none;">
           <div class="faith-swipe-card" id="faith-card">
             <div class="faith-ref" id="f-ref">✝️ ISAIA 43:2</div>
-            <div class="faith-quote" id="f-quote">«Se dovrai attraversare le acque, io sarò con te. I fiumi non ti sommergeranno. Se dovrai camminare nel fuoco, non ti scotterai. La fiamma non ti brucerà.»</div>
-            <div class="faith-focus" id="f-focus">🕊️ Non sei solo nella fatica. La forza di ripartire è già custodita dentro di te.</div>
+            <div class="faith-quote" id="f-quote">«Se dovrai attraversare le acque, io sarò con te. I fiumi non ti
+              sommergeranno. Se dovrai camminare nel fuoco, non ti scotterai. La fiamma non ti brucerà.»</div>
+            <div class="faith-focus" id="f-focus">🕊️ Non sei solo nella fatica. La forza di ripartire è già custodita
+              dentro di te.</div>
             <div class="card-footer-action">
               <button class="pill-btn primary full" onclick="nextFaith()">🕊️ Prossimo Versetto</button>
             </div>
@@ -522,23 +588,23 @@
 
         <div class="card form-card">
           <form id="checkin-form" onsubmit="submitCheckin(event)">
-            
+
             <!-- 1. Attività Svolta (Palestra, Corsa, Camminata, Boxe, Riposo) -->
             <div class="form-group">
               <label class="form-label">⚡ Quale attività hai svolto oggi?</label>
               <div class="segmented-control wrap-segmented">
                 <input type="radio" name="workout_done" id="wo-palestra" value="🏋️ Palestra" checked>
                 <label for="wo-palestra">🏋️ Palestra</label>
-                
+
                 <input type="radio" name="workout_done" id="wo-boxe" value="🥊 Boxe">
                 <label for="wo-boxe">🥊 Boxe</label>
 
                 <input type="radio" name="workout_done" id="wo-corsa" value="🏃 Corsa">
                 <label for="wo-corsa">🏃 Corsa</label>
-                
+
                 <input type="radio" name="workout_done" id="wo-camminata" value="🚶 Camminata">
                 <label for="wo-camminata">🚶 Camminata</label>
-                
+
                 <input type="radio" name="workout_done" id="wo-riposo" value="💤 Riposo">
                 <label for="wo-riposo">💤 Riposo</label>
               </div>
@@ -550,10 +616,10 @@
               <div class="segmented-control">
                 <input type="radio" name="food_score" id="food-clean" value="100% Pulita" checked>
                 <label for="food-clean">🥦 100% Pulita</label>
-                
+
                 <input type="radio" name="food_score" id="food-ok" value="Buona">
                 <label for="food-ok">⚖️ Buona</label>
-                
+
                 <input type="radio" name="food_score" id="food-junk" value="Sgarro">
                 <label for="food-junk">⚠️ Sgarro</label>
               </div>
@@ -565,13 +631,15 @@
                 <label class="form-label">⚡ Livello Energia & Lucidità:</label>
                 <span class="slider-val" id="energy-val">8 / 10</span>
               </div>
-              <input type="range" min="1" max="10" value="8" class="range-slider" id="energy-slider" oninput="updateEnergyVal(this.value)">
+              <input type="range" min="1" max="10" value="8" class="range-slider" id="energy-slider"
+                oninput="updateEnergyVal(this.value)">
             </div>
 
             <!-- 4. Note Libere -->
             <div class="form-group">
-              <label class="form-label">📝 Riflessioni, studio IVASS/S07 o sensazioni:</label>
-              <textarea id="checkin-notes" rows="3" placeholder="Es. Ottima sessione, moduli IVASS studiati, serata serena con Angela..."></textarea>
+              <label class="form-label">📝 Riflessioni, attività S07 o sensazioni:</label>
+              <textarea id="checkin-notes" rows="3"
+                placeholder="Es. Ottima sessione in palestra, appuntamenti S07, serata serena con Angela..."></textarea>
             </div>
 
             <!-- Submit Button -->
@@ -595,9 +663,80 @@
         </div>
       </section>
 
+      <!-- ===================================================================
+           TAB 6: QUESTIONARIO 360° (100 DOMANDE & LINK YOUTUBE)
+           =================================================================== -->
+      <section id="tab-q360" class="tab-page">
+        <div class="section-header">
+          <h2>🧬 Questionario 360° (100 Q)</h2>
+          <p>Compila con calma nel tempo dal telefono o dal PC. Ogni risposta si salva subito e nutre il Vault.</p>
+        </div>
+
+        <!-- Progresso 100 Domande + Bottone Sync Vault -->
+        <div class="card q360-hero-card">
+          <div class="daily-progress-box" style="margin-bottom: 12px;">
+            <div class="progress-top">
+              <span class="progress-label">🧬 Mappa di Simone Completata</span>
+              <span class="progress-pct" id="q360-progress-text">0 / 100 (0%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="q360-progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <button class="pill-btn primary" onclick="syncQ360ToVault()">🚀 Salva nel Vault</button>
+            <button class="pill-btn secondary" onclick="copyQ360Answers()">📋 Copia Risposte</button>
+          </div>
+          <div id="q360-sync-feedback" class="feedback-msg" style="display: none; margin-top: 10px;"></div>
+        </div>
+
+        <!-- Box Rapido Link YouTube / Podcast -->
+        <div class="card q360-yt-card">
+          <div class="card-header-flex">
+            <div class="card-header-left">
+              <span class="card-icon">🎬</span>
+              <h3>Inbox Link YouTube & Podcast</h3>
+            </div>
+            <span class="mini-counter">Auto-Save</span>
+          </div>
+          <p class="card-sub">Incolla qui i link di video YouTube (Jim Rohn, seminari, podcast) che vuoi farmi estrarre e riassumere nel Vault:</p>
+          <textarea id="q360-yt-links" rows="3"
+            placeholder="Incolla qui uno o più link YouTube (es. https://youtu.be/...) e note..."
+            oninput="saveQ360YoutubeLinks(this.value)"></textarea>
+        </div>
+
+        <!-- Filtri Categoria (10 Aree) & Stato -->
+        <div class="card q360-filter-card">
+          <div class="q360-filter-row">
+            <select id="q360-cat-select" class="q360-select" onchange="renderQ360List()">
+              <option value="all">📂 Tutte le 10 Aree (Q001–Q100)</option>
+              <option value="1">🍽️ 1. Piatti Preferiti & Cucina (Q001–Q010)</option>
+              <option value="2">🏋️ 2. Corpo, Palestra, Boxe & Corsa (Q011–Q020)</option>
+              <option value="3">🎬 3. YouTube, Podcast, Jim Rohn & Mentori (Q021–Q030)</option>
+              <option value="4">📚 4. Libri, Film, Serie & Musica (Q031–Q040)</option>
+              <option value="5">✈️ 5. Viaggi, Esperienze & Stile di Vita (Q041–Q050)</option>
+              <option value="6">❤️ 6. Angela, Coppia & Futuro (Q051–Q060)</option>
+              <option value="7">🏠 7. Radici, Mamma, Famiglia & Amici (Q061–Q070)</option>
+              <option value="8">🔨 8. Passato Lavorativo, Spese & Soldi (Q071–Q080)</option>
+              <option value="9">🧠 9. Psicologia, Trigger & Carattere (Q081–Q090)</option>
+              <option value="10">✝️ 10. Fede, Contatti S07 & Visione (Q091–Q100)</option>
+            </select>
+          </div>
+          <div class="sub-tabs" style="margin-top: 10px; margin-bottom: 0;">
+            <button class="sub-tab-btn active" id="qfilter-all" onclick="setQ360Filter('all')">Tutte</button>
+            <button class="sub-tab-btn" id="qfilter-todo" onclick="setQ360Filter('todo')">⬜ Da fare</button>
+            <button class="sub-tab-btn" id="qfilter-done" onclick="setQ360Filter('done')">✅ Fatto</button>
+          </div>
+        </div>
+
+        <!-- Lista Dinamica delle 100 Domande -->
+        <div id="q360-questions-container" class="q360-list"></div>
+      </section>
+
     </main>
 
-    <!-- Navigazione Inferiore Fissa (TabBar Mobile) -->
+    <!-- Navigazione Inferiore Fissa (TabBar Mobile a 6 Schede) -->
     <nav class="bottom-nav">
       <button class="nav-item active" onclick="switchTab('oggi')" id="nav-oggi">
         <span class="nav-icon">🗓️</span>
@@ -619,9 +758,14 @@
         <span class="nav-icon">📝</span>
         <span class="nav-label">Check-in</span>
       </button>
+      <button class="nav-item" onclick="switchTab('q360')" id="nav-q360">
+        <span class="nav-icon">🧬</span>
+        <span class="nav-label">100 Q</span>
+      </button>
     </nav>
   </div>
 
   <script src="app.js"></script>
 </body>
+
 </html>

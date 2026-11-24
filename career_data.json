@@ -1,0 +1,37 @@
+{
+  "ente": "Italiana Assicurazioni (Reale Group)",
+  "agenzia": "Sede S07 — Via Garibaldi 7, Torino",
+  "ruolo": "Welfare Coach & Consulente Assicurativo/Finanziario",
+  "mentor": "Luca Cucciatti",
+  "target_aum": "5.000.000 € AUM (4 anni)",
+  "obiettivi_fase": [
+    {
+      "titolo": "RUI Sezione E (IVASS)",
+      "stato": "In completamento",
+      "progress": 85
+    },
+    {
+      "titolo": "Esame OCF Consulenti Finanziari",
+      "stato": "In preparazione",
+      "progress": 30
+    },
+    {
+      "titolo": "Portafoglio Clienti & Consulenza",
+      "stato": "Pipeline attiva",
+      "progress": 15
+    }
+  ],
+  "corsi_completati": [
+    {
+      "corso": "Polizze Collettive & Welfare",
+      "voto": "87.5%",
+      "moduli": "7/7"
+    },
+    {
+      "corso": "Valutazione Opzioni Investimento IDD",
+      "voto": "100% 🏆",
+      "moduli": "5/5"
+    }
+  ],
+  "visione": "Costruzione di una carriera solida e indipendente, proteggendo il patrimonio e il futuro delle famiglie."
+}
